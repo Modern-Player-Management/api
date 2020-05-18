@@ -1,7 +1,7 @@
 language: csharp
 solution: ModernPlayerManagementAPI.sln
 mono: none
-dotnet: 2.1.502
+dotnet: 3.1.201
 install:
 - dotnet restore
 script:

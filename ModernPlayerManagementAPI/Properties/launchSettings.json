@@ -12,18 +12,18 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATABASE_URL": "postgres://unrdbupratjcvo:33b14511b5378449c1f0f19587ff6ac3e215eb0780563a400c8518c9f8a9d7ce@ec2-54-75-246-118.eu-west-1.compute.amazonaws.com:5432/dar8md0ved8gla"
       }
     },
     "ModernPlayerManagementAPI": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATABASE_URL": "postgres://unrdbupratjcvo:33b14511b5378449c1f0f19587ff6ac3e215eb0780563a400c8518c9f8a9d7ce@ec2-54-75-246-118.eu-west-1.compute.amazonaws.com:5432/dar8md0ved8gla"
       }
     }
   }

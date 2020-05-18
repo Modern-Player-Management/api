@@ -1,3 +1,1 @@
-# Modern Player Management API
-
-![ci](https://travis-ci.org/Modern-Player-Management/api.svg?branch=master)
+[![Build Status](https://travis-ci.com/Modern-Player-Management/api.svg?token=xgUivpRDAhwRrR1iUzX4&branch=master)](https://travis-ci.com/Modern-Player-Management/api)

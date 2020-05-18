@@ -10,10 +10,12 @@ namespace ModernPlayerManagementAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
-
-        public AuthController(IUserService userService)
+        private readonly IEmailValidator _emailValidator;
+        
+        public AuthController(IUserService userService, IEmailValidator emailValidator)
         {
             _userService = userService;
+            _emailValidator = emailValidator;
         }
 
         [HttpPost("authenticate")]
@@ -46,6 +48,11 @@ namespace ModernPlayerManagementAPI.Controllers
                 return BadRequest("User already exists");
             }
 
+            if (!this._emailValidator.IsValidEmail(dto.Email))
+            {
+                return BadRequest("Invalid Email");
+            }
+            
             var user = this._userService.Register(dto.Username, dto.Email,dto.Password);
             if (user == null)
             {
@@ -53,6 +60,18 @@ namespace ModernPlayerManagementAPI.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPost("available")]
+        public IActionResult CheckUsernameUsage([FromBody] UsernameCheckDTO dto)
+        {
+            var responseDTO = new UsernameAvailabilityDTO()
+            {
+                Username = dto.Username,
+                IsAvailable = this._userService.IsUniqueUser(dto.Username)
+            };
+
+            return Ok(responseDTO);
         }
     }
 }

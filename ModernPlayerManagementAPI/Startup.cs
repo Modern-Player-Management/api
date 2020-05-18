@@ -40,7 +40,8 @@ namespace ModernPlayerManagementAPI
                 options.UseNpgsql(this.GetPostgresConnectionString());
             });
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<IUserService, UserService>();    
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IEmailValidator, EmailValidator>();
             
             // ==================================== Swagger config =====================================================
 

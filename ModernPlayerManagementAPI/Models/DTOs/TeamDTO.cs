@@ -5,7 +5,7 @@ namespace ModernPlayerManagementAPI.Models.DTOs
 {
     public class TeamDTO
     {
-        public Guid Id;
+        public Guid Id{ get; set; }
         public string Name { get; set; }
         public UserDTO Manager { get; set; }
         public bool isCurrentUserManager { get; set; }

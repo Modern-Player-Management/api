@@ -6,4 +6,4 @@ install:
 - dotnet restore
 script:
 - dotnet build
-- dotnet test ModernPlayerManagementAPITests\ModernPlayerManagementAPITests.csproj
+- dotnet test ModernPlayerManagementAPITests/ModernPlayerManagementAPITests.csproj

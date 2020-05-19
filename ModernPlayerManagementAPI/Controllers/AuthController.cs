@@ -19,6 +19,7 @@ namespace ModernPlayerManagementAPI.Controllers
         }
 
         [HttpPost("authenticate")]
+        [ProducesResponseType(typeof(LoggedUserDTO), 200)]
         public IActionResult Authenticate([FromBody] LoginDTO dto)
         {
             var user = this._userService.Authenticate(dto.Username, dto.Password);
@@ -31,7 +32,8 @@ namespace ModernPlayerManagementAPI.Controllers
             {
                 Username = user.Username,
                 Email = user.Email,
-                Token = user.Token
+                Token = user.Token,
+                Id = user.Id
             };
 
          
@@ -40,6 +42,8 @@ namespace ModernPlayerManagementAPI.Controllers
         }
         
         [HttpPost("register")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         public IActionResult Register([FromBody] RegisterDTO dto)
         {
             var userNameUnique = this._userService.IsUniqueUser(dto.Username);
@@ -63,6 +67,7 @@ namespace ModernPlayerManagementAPI.Controllers
         }
 
         [HttpPost("available")]
+        [ProducesResponseType(typeof(UsernameAvailabilityDTO), 200)]
         public IActionResult CheckUsernameUsage([FromBody] UsernameCheckDTO dto)
         {
             var responseDTO = new UsernameAvailabilityDTO()

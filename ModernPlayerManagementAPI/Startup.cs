@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ModernPlayerManagementAPI.Database;
+using ModernPlayerManagementAPI.Mapper;
 using ModernPlayerManagementAPI.Models.Repository;
 using ModernPlayerManagementAPI.Services;
 using Npgsql;
@@ -42,7 +44,10 @@ namespace ModernPlayerManagementAPI
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailValidator, EmailValidator>();
-            
+            services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<ITeamService, TeamService>();
+            services.AddAutoMapper(typeof(Mappings));
+
             // ==================================== Swagger config =====================================================
 
             services.AddSwaggerGen(options =>
@@ -51,37 +56,73 @@ namespace ModernPlayerManagementAPI
                 {
                     Title = "MPM API",
                     Description = "Backend for MPM",
-                    Version = "1"
+                    Version = "1",
+                    Contact = new Microsoft.OpenApi.Models.OpenApiContact()
+                    {
+                        Email = "arsene@lapostolet.fr",
+                        Name = "Arsène Lapostolet",
+                        Url = new Uri("https://arsenelapostolet.fr")
+                    },
+                    License = new Microsoft.OpenApi.Models.OpenApiLicense()
+                    {
+                        Name = "MIT License",
+                        Url = new Uri("https://en.wikipedia.org/wiki/MIT_License")
+                    }
+                });
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Bearer Authorization",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
+                        },
+                        new List<string>()
+                    }
                 });
             });
-            
+
             // ===================================== Bearer Auth =======================================================
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-            
+
             services.AddAuthentication(auth =>
-            {
-                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(auth =>
-            {
-                auth.RequireHttpsMetadata = false;
-                auth.SaveToken = true;
-                auth.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            })
+                    auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(auth =>
+                {
+                    auth.RequireHttpsMetadata = false;
+                    auth.SaveToken = true;
+                    auth.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                })
                 ;
-            
-            
+
+
             services.AddControllers();
         }
 
@@ -97,11 +138,11 @@ namespace ModernPlayerManagementAPI
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/MPMDocumentation/swagger.json","MPM API");
+                options.SwaggerEndpoint("/swagger/MPMDocumentation/swagger.json", "MPM API");
                 options.RoutePrefix = "";
             });
             app.UseRouting();
-            
+
             app.UseCors(cors =>
             {
                 cors.AllowAnyOrigin();

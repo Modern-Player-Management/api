@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ModernPlayerManagementAPI.Database;
@@ -22,6 +23,7 @@ namespace ModernPlayerManagementAPITests
                 .Options;
 
             this.context = new ApplicationDbContext(options);
+            this.context.Database.EnsureDeleted();
         }
 
         [Fact]
@@ -78,6 +80,36 @@ namespace ModernPlayerManagementAPITests
 
             // Then
             Assert.Equal(2, result.Count);
+        }
+        
+        [Fact]
+        public void Get_Teams_Test()
+        {
+            this.setup();
+
+            // Given
+            var manager = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+            var manager2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+            context.Users.Add(manager);
+            context.Users.Add(manager2);
+
+            var team1 = new Team
+                {Id = Guid.NewGuid(), Created = DateTime.Now, ManagerId = manager.Id, Name = "Test Team 1"};
+            context.Teams.Add(team1);
+            var team2 = new Team
+                {Id = Guid.NewGuid(), Created = DateTime.Now, ManagerId = manager.Id, Name = "Test Team 2"};
+            context.Teams.Add(team2);
+            var team3 = new Team
+                {Id = Guid.NewGuid(), Created = DateTime.Now, ManagerId = manager2.Id, Name = "Test Team 2"};
+            context.Teams.Add(team3);
+            context.SaveChanges();
+            
+            // When 
+            TeamRepository repo = new TeamRepository(context);
+            List<Team> result = repo.getTeams().ToList();
+
+            // Then
+            Assert.Equal(3, result.Count);
         }
     }
 }

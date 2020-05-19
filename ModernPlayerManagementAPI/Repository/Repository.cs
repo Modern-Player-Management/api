@@ -37,7 +37,7 @@ namespace ModernPlayerManagementAPI.Models.Repository
             {
                 throw new ArgumentNullException();
             }
-
+            entity.Created = DateTime.Now;
             _entities.Add(entity);
             _context.SaveChanges();
         }

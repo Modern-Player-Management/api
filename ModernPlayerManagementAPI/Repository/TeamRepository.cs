@@ -32,6 +32,7 @@ namespace ModernPlayerManagementAPI.Models.Repository
         {
             return (from team in this.GetTeamsEager()
                 where team.ManagerId == userId || team.Members.Select(member => member.Id).Contains(userId)
+                orderby team.Created
                 select team).ToList();
         }
 

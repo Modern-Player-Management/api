@@ -50,10 +50,11 @@ namespace ModernPlayerManagementAPI.Controllers
                 Name = team.Name,
                 isCurrentUserManager = true,
                 Manager = _mapper.Map<UserDTO>(team.Manager),
-                Members = team.Members.Select(member => _mapper.Map<UserDTO>(member)).ToList()
+                Members = team.Members.Select(member => _mapper.Map<UserDTO>(member)).ToList(),
+                Created = team.Created
             };
 
-            return Created($"api/Teams/${team.Id}", team);
+            return Created($"api/Teams/${team.Id}", teamDTO);
         }
 
         // [HttpGet("{teamId:Guid}")]
@@ -81,7 +82,8 @@ namespace ModernPlayerManagementAPI.Controllers
                 Name = team.Name,
                 isCurrentUserManager = team.ManagerId == getCurrentUserId(),
                 Manager = _mapper.Map<UserDTO>(team.Manager),
-                Members = team.Members.Select(member => _mapper.Map<UserDTO>(member)).ToList()
+                Members = team.Members.Select(member => _mapper.Map<UserDTO>(member)).ToList(),
+                Created = team.Created
             }));
         }
 

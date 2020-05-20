@@ -52,7 +52,12 @@ namespace ModernPlayerManagementAPI.Services
 
         public ICollection<TeamDTO> getTeams(Guid userId)
         {
-            return this.teamRepository.getUserTeams(userId).Select(team => mapper.Map<TeamDTO>(team)).ToList();
+            return this.teamRepository.getUserTeams(userId).Select(team =>
+            {
+                var dto = mapper.Map<TeamDTO>(team);
+                dto.isCurrentUserManager = dto.Manager.Id == userId;
+                return dto;
+            }).ToList();
         }
 
         public void addPlayer(Guid teamId, UserDTO playerDto)

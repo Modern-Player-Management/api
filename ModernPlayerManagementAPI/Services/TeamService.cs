@@ -11,10 +11,10 @@ namespace ModernPlayerManagementAPI.Services
     public class TeamService : ITeamService
     {
         private readonly ITeamRepository teamRepository;
-        private readonly IRepository<User> userRepository;
+        private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
 
-        public TeamService(ITeamRepository teamRepository, IRepository<User> userRepository, IMapper mapper)
+        public TeamService(ITeamRepository teamRepository, IUserRepository userRepository, IMapper mapper)
         {
             this.teamRepository = teamRepository;
             this.userRepository = userRepository;
@@ -63,7 +63,20 @@ namespace ModernPlayerManagementAPI.Services
         public void addPlayer(Guid teamId, UserDTO playerDto)
         {
             var team = this.teamRepository.getTeam(teamId);
-            var player = this.userRepository.GetById(playerDto.Id);
+
+            User player;
+            if (playerDto.Id != Guid.Empty)
+            {
+                player = this.userRepository.GetById(playerDto.Id);
+            }
+            else if (playerDto.Username != null)
+            {
+                player = this.userRepository.GetUserByUsername(playerDto.Username);
+            }
+            else
+            {
+                throw new ArgumentException("You should provide either the username or the Id of the user");
+            }
             
             if (!team.Members.Contains(player))
             {

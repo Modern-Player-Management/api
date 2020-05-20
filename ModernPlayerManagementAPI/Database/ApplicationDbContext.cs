@@ -11,5 +11,6 @@ namespace ModernPlayerManagementAPI.Database
 
         public DbSet<User> Users { get; set; }
         public DbSet<Team> Teams { get; set; }
+        public DbSet<DbFile> Files { get; set; }
     }
 }

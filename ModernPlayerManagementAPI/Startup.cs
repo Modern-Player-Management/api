@@ -44,6 +44,8 @@ namespace ModernPlayerManagementAPI
             services.AddScoped<IEmailValidator, EmailValidator>();
             services.AddScoped<ITeamRepository, TeamRepository>();
             services.AddScoped<ITeamService, TeamService>();
+            services.AddScoped<IFilesService, FilesService>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddAutoMapper(typeof(Mappings));
 
             // ==================================== Swagger config =====================================================

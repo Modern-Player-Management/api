@@ -66,7 +66,7 @@ namespace ModernPlayerManagementAPITests
             });
 
 
-            var userRepository = new Mock<IRepository<User>>();
+            var userRepository = new Mock<IUserRepository>();
             userRepository.Setup(mock => mock.GetById(It.IsAny<Guid>()))
                 .Returns<Guid>(userId => this.users.Find(user => user.Id == userId));
 

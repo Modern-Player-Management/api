@@ -26,36 +26,26 @@ namespace ModernPlayerManagementAPI.Controllers
             this._mapper = _mapper;
         }
 
+        /// <summary>
+        /// Create a new team
+        /// </summary>
+        /// <param name="dto">The team infos</param>
+        /// <returns>The created team</returns>
         [HttpPost]
         [ProducesResponseType(typeof(TeamDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult CreateTeam([FromBody] UpsertTeamDTO dto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             var team = this._teamService.createTeam(dto,getCurrentUserId());
 
             return Created($"api/Teams/${team.Id}", team);
         }
 
-        // [HttpGet("{teamId:Guid}")]
-        // [ProducesResponseType(typeof(TeamDTO), StatusCodes.Status200OK)]
-        // public IActionResult GetTeam(Guid teamId)
-        // {
-        //     var team = this._teamService.getTeamById(teamId);
-        //     return Ok(new TeamDTO()
-        //     {
-        //         Id = team.Id,
-        //         Name = team.Name,
-        //         isCurrentUserManager = team.ManagerId == getCurrentUserId(),
-        //         Manager = _mapper.Map<UserDTO>(team.Manager),
-        //         Members = team.Members.Select(member => _mapper.Map<UserDTO>(member)).ToList()
-        //     });
-        // }
-
+        /// <summary>
+        /// Gets all the user's teams (teams in which the user is either manager or member
+        /// </summary>
+        /// <returns>The corresponding teams</returns>
         [HttpGet]
         [ProducesResponseType(typeof(ICollection<TeamDTO>), StatusCodes.Status200OK)]
         public IActionResult GetTeams()
@@ -63,6 +53,11 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok(this._teamService.getTeams(this.getCurrentUserId()));
         }
 
+        /// <summary>
+        /// Adds a player to a team
+        /// </summary>
+        /// <param name="teamId">Id of the team in which the player should be added</param>
+        /// <param name="dto">A Dto containing the Id of the user to add in a team</param>
         [HttpPost("{teamId:Guid}/player")]
         public IActionResult AddPlayerToTeam(Guid teamId, [FromBody] UserDTO dto)
         {
@@ -70,6 +65,11 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok();
         }
         
+        /// <summary>
+        /// Removes a player from a team
+        /// </summary>
+        /// <param name="teamId">Id of the team from which the player should be removed</param>
+        /// <param name="userId"> Dto containing the Id of the user to remove from a team</param>
         [HttpDelete("{teamId:Guid}/player/{userId:Guid}")]
         public IActionResult RemovePlayerToTeam(Guid teamId, Guid userId)
         {
@@ -77,6 +77,11 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Updates a team
+        /// </summary>
+        /// <param name="teamId">Id of the team to update</param>
+        /// <param name="dto">DTO containing the new info of the team</param>
         [HttpPut("{teamId:Guid}")]
         public IActionResult UpdateTeam(Guid teamId, [FromBody] UpsertTeamDTO dto)
         {
@@ -85,6 +90,10 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok();
         }
         
+        /// <summary>
+        /// Deletes a team
+        /// </summary>
+        /// <param name="teamId">Id of the team to delete</param>
         [HttpDelete("{teamId:Guid}")]
         public IActionResult DeleteTeam(Guid teamId)
         {

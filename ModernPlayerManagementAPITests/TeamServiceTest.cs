@@ -114,19 +114,21 @@ namespace ModernPlayerManagementAPITests
         {
             this.setup();
             // Given
-            var manager = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+            var manager1 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+            var manager2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
 
             var team1 = new Team
-                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", ManagerId = manager.Id};
+                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", ManagerId = manager1.Id};
 
             var team2 = new Team
-                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", Members = new List<User>() {manager}};
+                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team",ManagerId = manager2.Id, Members = new List<User>() {manager1}};
             this.teams.Add(team1);
             this.teams.Add(team2);
-            this.users.Add(manager);
+            this.users.Add(manager1);
+            this.users.Add(manager2);
 
             // When
-            List<TeamDTO> getTeams = this.teamService.getTeams(manager.Id).ToList();
+            List<TeamDTO> getTeams = this.teamService.getTeams(manager1.Id).ToList();
 
             //Then
             Assert.Equal(2, getTeams.Count);

@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using ModernPlayerManagementAPI.Models;
+using ModernPlayerManagementAPI.Models.DTOs;
 
 namespace ModernPlayerManagementAPI.Services
 {
     public interface ITeamService
     {
-        Team createTeam(Team team, Guid managerId);
-        Team getTeamById(Guid id);
-        ICollection<Team> getTeams(Guid userId);
-        void addPlayer(Guid teamId, User player);
-        void removePlayer(Guid teamId, User player);
-        void UpdateTeam(Team team);
+        TeamDTO createTeam(UpsertTeamDTO team, Guid currentUserId);
+        TeamDTO getTeamById(Guid id);
+        ICollection<TeamDTO> getTeams(Guid userId);
+        void addPlayer(Guid teamId, UserDTO player);
+        void removePlayer(Guid teamId, Guid playerId);
+        void UpdateTeam(Guid teamId, UpsertTeamDTO team);
         void DeleteTeam(Guid Id);
     }
 }

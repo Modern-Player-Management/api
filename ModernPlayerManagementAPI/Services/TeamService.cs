@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
 using ModernPlayerManagementAPI.Models;
+using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Models.Repository;
 
 namespace ModernPlayerManagementAPI.Services
@@ -8,32 +11,55 @@ namespace ModernPlayerManagementAPI.Services
     public class TeamService : ITeamService
     {
         private readonly ITeamRepository teamRepository;
+        private readonly IRepository<User> userRepository;
+        private readonly IMapper mapper;
 
-        public TeamService(ITeamRepository teamRepository)
+        public TeamService(ITeamRepository teamRepository, IRepository<User> userRepository, IMapper mapper)
         {
             this.teamRepository = teamRepository;
+            this.userRepository = userRepository;
+            this.mapper = mapper;
         }
 
-        public Team createTeam(Team team, Guid managerId)
+        public TeamDTO createTeam(UpsertTeamDTO teamDto, Guid currentUserId)
         {
-            team.ManagerId = managerId;
+            var team = new Team()
+            {
+                Name = teamDto.Name,
+                ManagerId = currentUserId
+            };
             this.teamRepository.Insert(team);
-            return team;
+
+            team = this.teamRepository.getTeam(team.Id);
+            
+            var teamDTO = new TeamDTO()
+            {
+                Id = team.Id,
+                Name = team.Name,
+                isCurrentUserManager = true,
+                Manager = mapper.Map<UserDTO>(team.Manager),
+                Members = team.Members.Select(member => mapper.Map<UserDTO>(member)).ToList(),
+                Created = team.Created
+            };
+            
+            return teamDTO;
         }
 
-        public Team getTeamById(Guid id)
+        public TeamDTO getTeamById(Guid id)
         {
-            return this.teamRepository.getTeam(id);
+            return this.mapper.Map<TeamDTO>(this.teamRepository.getTeam(id));
         }
 
-        public ICollection<Team> getTeams(Guid userId)
+        public ICollection<TeamDTO> getTeams(Guid userId)
         {
-            return this.teamRepository.getUserTeams(userId);
+            return this.teamRepository.getUserTeams(userId).Select(team => mapper.Map<TeamDTO>(team)).ToList();
         }
 
-        public void addPlayer(Guid teamId, User player)
+        public void addPlayer(Guid teamId, UserDTO playerDto)
         {
             var team = this.teamRepository.getTeam(teamId);
+            var player = this.userRepository.GetById(playerDto.Id);
+            
             if (!team.Members.Contains(player))
             {
                 team.Members.Add(player);
@@ -41,9 +67,10 @@ namespace ModernPlayerManagementAPI.Services
             }
         }
 
-        public void removePlayer(Guid teamId, User player)
+        public void removePlayer(Guid teamId, Guid playerId)
         {
             var team = this.teamRepository.getTeam(teamId);
+            var player = this.userRepository.GetById(playerId);
             if (team.Members.Contains(player))
             {
                 team.Members.Remove(player);
@@ -55,8 +82,10 @@ namespace ModernPlayerManagementAPI.Services
             }
         }
 
-        public void UpdateTeam(Team team)
+        public void UpdateTeam(Guid teamId, UpsertTeamDTO teamDto)
         {
+            var team = this.teamRepository.getTeam(teamId);
+            team.Name = teamDto.Name;
             this.teamRepository.Update(team);
         }
 

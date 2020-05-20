@@ -6,10 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ModernPlayerManagementAPI.Mapper;
-using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
-using ModernPlayerManagementAPI.Models.Repository;
 using ModernPlayerManagementAPI.Services;
 
 namespace ModernPlayerManagementAPI.Controllers
@@ -38,23 +35,10 @@ namespace ModernPlayerManagementAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
-            var team = this._teamService.createTeam(new Team() {Name = dto.Name},
-                getCurrentUserId());
 
-            team = this._teamService.getTeamById(team.Id);
+            var team = this._teamService.createTeam(dto,getCurrentUserId());
 
-            var teamDTO = new TeamDTO()
-            {
-                Id = team.Id,
-                Name = team.Name,
-                isCurrentUserManager = true,
-                Manager = _mapper.Map<UserDTO>(team.Manager),
-                Members = team.Members.Select(member => _mapper.Map<UserDTO>(member)).ToList(),
-                Created = team.Created
-            };
-
-            return Created($"api/Teams/${team.Id}", teamDTO);
+            return Created($"api/Teams/${team.Id}", team);
         }
 
         // [HttpGet("{teamId:Guid}")]
@@ -76,15 +60,37 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(typeof(ICollection<TeamDTO>), StatusCodes.Status200OK)]
         public IActionResult GetTeams()
         {
-            return Ok(this._teamService.getTeams(this.getCurrentUserId()).Select(team => new TeamDTO()
-            {
-                Id = team.Id,
-                Name = team.Name,
-                isCurrentUserManager = team.ManagerId == getCurrentUserId(),
-                Manager = _mapper.Map<UserDTO>(team.Manager),
-                Members = team.Members.Select(member => _mapper.Map<UserDTO>(member)).ToList(),
-                Created = team.Created
-            }));
+            return Ok(this._teamService.getTeams(this.getCurrentUserId()));
+        }
+
+        [HttpPost("{teamId:Guid}/player")]
+        public IActionResult AddPlayerToTeam(Guid teamId, [FromBody] UserDTO dto)
+        {
+            this._teamService.addPlayer(teamId, dto);
+            return Ok();
+        }
+        
+        [HttpDelete("{teamId:Guid}/player/{userId:Guid}")]
+        public IActionResult RemovePlayerToTeam(Guid teamId, Guid userId)
+        {
+            this._teamService.removePlayer(teamId, userId);
+            return Ok();
+        }
+
+        [HttpPut("{teamId:Guid}")]
+        public IActionResult UpdateTeam(Guid teamId, [FromBody] UpsertTeamDTO dto)
+        {
+            this._teamService.UpdateTeam(teamId, dto);
+
+            return Ok();
+        }
+        
+        [HttpDelete("{teamId:Guid}")]
+        public IActionResult DeleteTeam(Guid teamId)
+        {
+            this._teamService.DeleteTeam(teamId);
+
+            return Ok();
         }
 
         private Guid getCurrentUserId()

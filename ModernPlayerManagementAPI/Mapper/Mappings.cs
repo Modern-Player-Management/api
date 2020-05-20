@@ -9,6 +9,7 @@ namespace ModernPlayerManagementAPI.Mapper
         public Mappings()
         {
             CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<Team, TeamDTO>().ReverseMap();
         }
     }
 }

@@ -1,4 +1,17 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0b1b36fc_002Da029_002D4fa2_002D858d_002Ddbbeef1310d3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Create_Team_Test" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::7E521710-B153-416D-9412-5E8E9DE095D8::.NETCoreApp,Version=v3.1::ModernPlayerManagementAPITests.TeamServiceTest.Create_Team_Test&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=89fbcc7b_002D9978_002D4a2b_002Db081_002Ddcad7f6571b1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Get_Team_By_Id" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;ProjectFile&gt;7E521710-B153-416D-9412-5E8E9DE095D8/f:TeamRepositoryTest.cs&lt;/ProjectFile&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;ProjectFile&gt;7E521710-B153-416D-9412-5E8E9DE095D8/f:TeamRepositoryTest.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;xUnit::7E521710-B153-416D-9412-5E8E9DE095D8::.NETCoreApp,Version=v3.1::ModernPlayerManagementAPITests.TeamServiceTest.Create_Team_Test&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::7E521710-B153-416D-9412-5E8E9DE095D8::.NETCoreApp,Version=v3.1::ModernPlayerManagementAPITests.TeamServiceTest.Get_Team_By_Id&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::7E521710-B153-416D-9412-5E8E9DE095D8::.NETCoreApp,Version=v3.1::ModernPlayerManagementAPITests.TeamServiceTest.GetTeams_Test&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;ProjectFile&gt;7E521710-B153-416D-9412-5E8E9DE095D8/f:TeamServiceTest.cs&lt;/ProjectFile&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

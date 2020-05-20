@@ -7,3 +7,13 @@ install:
 script:
 - dotnet build
 - dotnet test ModernPlayerManagementAPITests/ModernPlayerManagementAPITests.csproj
+
+after_success:
+  - wget https://raw.githubusercontent.com/LacazeThomas/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh $WEBHOOK_URL
+
+after_failure:
+  - wget https://raw.githubusercontent.com/LacazeThomas/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh $WEBHOOK_URL

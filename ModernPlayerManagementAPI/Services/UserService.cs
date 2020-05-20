@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ModernPlayerManagementAPI.Models;
@@ -62,6 +63,13 @@ namespace ModernPlayerManagementAPI.Services
 
         public User Register(string username, string email, string password)
         {
+            var passwordValidity = ValidatePassword(password);
+            var isPasswordValid = passwordValidity == "Valid";
+            if (!isPasswordValid)
+            {
+                throw new ArgumentException(passwordValidity);
+            }
+            
             User user = new User()
             {
                 Username = username,
@@ -72,6 +80,28 @@ namespace ModernPlayerManagementAPI.Services
             this._userRepository.Insert(user);
             
             return user;
+        }
+
+        private string ValidatePassword(string password)
+        {
+            if (!new Regex(@"(?=.*[a-z])").IsMatch(password))
+            {
+                return "Invalid Password : At least one lowercase letter is required";
+            }
+            if (!new Regex(@"(?=.*[A-Z])").IsMatch(password))
+            {
+                return "Invalid Password : At least one uppercase letter is required";
+            }
+            if (!new Regex(@"(?=.*\d)").IsMatch(password))
+            {
+                return "Invalid Password : At least one number is required";
+            }
+            if (!new Regex(@"^.{8,32}$").IsMatch(password))
+            {
+                return "Invalid Password : Password length : 8-32 characters";
+            }
+
+            return "Valid";
         }
     }
 }

@@ -1,25 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ModernPlayerManagementAPI.Database;
 using ModernPlayerManagementAPI.Mapper;
+using ModernPlayerManagementAPI.Middlewares;
 using ModernPlayerManagementAPI.Models.Repository;
 using ModernPlayerManagementAPI.Services;
 using Npgsql;
@@ -59,13 +55,13 @@ namespace ModernPlayerManagementAPI
                     Title = "MPM API",
                     Description = "Backend for MPM",
                     Version = "1",
-                    Contact = new Microsoft.OpenApi.Models.OpenApiContact()
+                    Contact = new OpenApiContact()
                     {
                         Email = "arsene@lapostolet.fr",
                         Name = "Arsène Lapostolet",
                         Url = new Uri("https://arsenelapostolet.fr")
                     },
-                    License = new Microsoft.OpenApi.Models.OpenApiLicense()
+                    License = new OpenApiLicense()
                     {
                         Name = "MIT License",
                         Url = new Uri("https://en.wikipedia.org/wiki/MIT_License")
@@ -139,6 +135,9 @@ namespace ModernPlayerManagementAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+
 
             app.UseHttpsRedirection();
             app.UseSwagger();

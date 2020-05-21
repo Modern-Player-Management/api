@@ -31,17 +31,27 @@ namespace ModernPlayerManagementAPI.Services
             this.teamRepository.Insert(team);
 
             team = this.teamRepository.getTeam(team.Id);
-            
+
             var teamDTO = new TeamDTO()
             {
                 Id = team.Id,
                 Name = team.Name,
                 isCurrentUserManager = true,
                 Manager = mapper.Map<UserDTO>(team.Manager),
-                Members = team.Members.Select(member => mapper.Map<UserDTO>(member)).ToList(),
+                Memberships = team.Memberships.Select(member =>
+                    {
+                        return new UserDTO()
+                        {
+                            Created = member.User.Created,
+                            Id = member.UserId,
+                            Email = member.User.Email,
+                            Username = member.User.Username
+                        };
+                    })
+                    .ToList(),
                 Created = team.Created
             };
-            
+
             return teamDTO;
         }
 
@@ -52,10 +62,22 @@ namespace ModernPlayerManagementAPI.Services
 
         public ICollection<TeamDTO> getTeams(Guid userId)
         {
-            return this.teamRepository.getUserTeams(userId).Select(team =>
+            var teams = this.teamRepository.getUserTeams(userId);
+            return teams.Select(team =>
             {
-                var dto = mapper.Map<TeamDTO>(team);
-                dto.isCurrentUserManager = dto.Manager.Id == userId;
+                var dto = new TeamDTO()
+                {
+                    Name = team.Name,
+                    Created = team.Created,
+                    Id = team.Id,
+                    isCurrentUserManager = team.Manager.Id == userId,
+                    Manager = mapper.Map<UserDTO>(team.Manager),
+                    Memberships = team.Memberships.Select(membership => new UserDTO()
+                    {
+                        Id = membership.UserId, Created = membership.User.Created, Email = membership.User.Email,
+                        Username = membership.User.Username
+                    }).ToList()
+                };
                 return dto;
             }).ToList();
         }
@@ -77,10 +99,10 @@ namespace ModernPlayerManagementAPI.Services
             {
                 throw new ArgumentException("You should provide either the username or the Id of the user");
             }
-            
-            if (!team.Members.Contains(player))
+
+            if (!team.Memberships.Select(member => member.UserId).Contains(player.Id))
             {
-                team.Members.Add(player);
+                team.Memberships.Add(new Membership() {TeamId = teamId, UserId = player.Id});
                 this.teamRepository.Update(team);
             }
         }
@@ -89,9 +111,9 @@ namespace ModernPlayerManagementAPI.Services
         {
             var team = this.teamRepository.getTeam(teamId);
             var player = this.userRepository.GetById(playerId);
-            if (team.Members.Contains(player))
+            if (team.Memberships.Select(member => member.UserId).Contains(player.Id))
             {
-                team.Members.Remove(player);
+                team.Memberships.Remove(team.Memberships.First(membership => membership.UserId == playerId));
                 this.teamRepository.Update(team);
             }
             else

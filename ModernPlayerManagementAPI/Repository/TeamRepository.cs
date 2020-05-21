@@ -23,7 +23,7 @@ namespace ModernPlayerManagementAPI.Models.Repository
 
         public Team getTeam(Guid id)
         {
-            return (from team in this._context.Teams.Include(team => team.Manager).Include(team => team.Members)
+            return (from team in this._context.Teams.Include(team => team.Manager).Include(team => team.Memberships)
                 where team.Id == id
                 select team).First();
         }
@@ -31,14 +31,17 @@ namespace ModernPlayerManagementAPI.Models.Repository
         public ICollection<Team> getUserTeams(Guid userId)
         {
             return (from team in this.GetTeamsEager()
-                where team.ManagerId == userId || team.Members.Select(member => member.Id).Contains(userId)
+                where team.ManagerId == userId || team.Memberships.Select(member => member.UserId).Contains(userId)
                 orderby team.Created
                 select team).ToList();
         }
 
-        private IIncludableQueryable<Team, ICollection<User>> GetTeamsEager()
+        private IIncludableQueryable<Team, User> GetTeamsEager()
         {
-            return this._context.Teams.Include(team => team.Manager).Include(team => team.Members);
+            return this._context.Teams
+                .Include(team => team.Manager)
+                .Include(team => team.Memberships)
+                .ThenInclude(membership => membership.User);
         }
     }
 }

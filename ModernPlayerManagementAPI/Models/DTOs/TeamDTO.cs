@@ -9,7 +9,7 @@ namespace ModernPlayerManagementAPI.Models.DTOs
         public string Name { get; set; }
         public UserDTO Manager { get; set; }
         public bool isCurrentUserManager { get; set; }
-        public ICollection<UserDTO> Members { get; set; }
+        public ICollection<UserDTO> Memberships { get; set; }
         public DateTime Created { get; set; }
     }
 }

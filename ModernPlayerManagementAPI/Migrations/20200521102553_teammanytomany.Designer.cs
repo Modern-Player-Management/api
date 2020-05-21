@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ModernPlayerManagementAPI.Database;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,9 +10,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ModernPlayerManagementAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200521102553_teammanytomany")]
+    partial class teammanytomany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,14 +112,14 @@ namespace ModernPlayerManagementAPI.Migrations
 
             modelBuilder.Entity("ModernPlayerManagementAPI.Models.Membership", b =>
                 {
-                    b.HasOne("ModernPlayerManagementAPI.Models.Team", "Team")
+                    b.HasOne("ModernPlayerManagementAPI.Models.Team", null)
                         .WithMany("Memberships")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ModernPlayerManagementAPI.Models.User", "User")
-                        .WithMany("Memberships")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using ModernPlayerManagementAPI.Database;
 
 namespace ModernPlayerManagementAPI.Models.Repository
@@ -11,7 +12,7 @@ namespace ModernPlayerManagementAPI.Models.Repository
 
         public User GetUserByUsername(string username)
         {
-            return (from user in this._context.Users where user.Username == username select user).First();
+            return (from user in this._context.Users.Include(user => user.Memberships).ThenInclude(membership => membership.Team) where user.Username == username select user).First();
         }
     }
 }

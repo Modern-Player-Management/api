@@ -27,7 +27,7 @@ namespace ModernPlayerManagementAPITests
             var teamRepository = new Mock<ITeamRepository>();
             teamRepository.Setup(mock => mock.Insert(It.IsAny<Team>())).Callback<Team>(team =>
             {
-                team.Members ??= new List<User>();
+                team.Memberships ??= new List<Membership>();
                 teams.Add(team);
             });
             teamRepository.Setup(mock => mock.getTeam(It.IsAny<Guid>()))
@@ -38,19 +38,32 @@ namespace ModernPlayerManagementAPITests
                     {
                         team.Manager = this.users.Find(u => u.Id == team.ManagerId);
                     }
+                    
+                    team.Memberships ??= new List<Membership>();
+
+                    foreach (var membership in team.Memberships)
+                    {
+                        membership.User = this.users.First(user => user.Id == membership.UserId);
+                        membership.Team = this.teams.First(team => team.Id == membership.TeamId);
+                    }
 
                     return team;
                 });
             teamRepository.Setup(mock => mock.getUserTeams(It.IsAny<Guid>()))
                 .Returns<Guid>(userId => teams.FindAll(team =>
-                    team.ManagerId == userId || team.Members.Select(member => member.Id).Contains(userId)).Select(
+                    team.ManagerId == userId || team.Memberships.Select(member => member.UserId).Contains(userId)).Select(
                     team =>
                     {
                         if (team.ManagerId != null)
                         {
                             team.Manager = this.users.Find(u => u.Id == team.ManagerId);
                         }
-
+                        team.Memberships ??= new List<Membership>();
+                        foreach (var membership in team.Memberships)
+                        {
+                            membership.User = this.users.First(user => user.Id == membership.UserId);
+                            membership.Team = this.teams.First(team => team.Id == membership.TeamId);
+                        }
                         return team;
                     }).ToList());
             teamRepository.Setup(mock => mock.Update(It.IsAny<Team>()))
@@ -118,10 +131,11 @@ namespace ModernPlayerManagementAPITests
             var manager2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
 
             var team1 = new Team
-                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", ManagerId = manager1.Id};
+                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team 1", ManagerId = manager1.Id};
 
             var team2 = new Team
-                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team",ManagerId = manager2.Id, Members = new List<User>() {manager1}};
+                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team 2",ManagerId = manager2.Id, Memberships = new List<Membership>() {}};
+            team2.Memberships.Add(new Membership(){UserId = manager1.Id, TeamId = team2.Id});
             this.teams.Add(team1);
             this.teams.Add(team2);
             this.users.Add(manager1);
@@ -143,7 +157,7 @@ namespace ModernPlayerManagementAPITests
             var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
 
             var team = new Team
-                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", Members = new List<User>()};
+                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", Memberships = new List<Membership>()};
             this.users.Add(user);
             this.teams.Add(team);
 
@@ -156,7 +170,7 @@ namespace ModernPlayerManagementAPITests
             this.teamService.addPlayer(team.Id, userDTO);
 
             // Then
-            Assert.Equal(1, this.teams[0].Members.Count);
+            Assert.Equal(1, this.teams[0].Memberships.Count);
         }
 
         [Fact]
@@ -167,7 +181,9 @@ namespace ModernPlayerManagementAPITests
             var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
 
             var team = new Team
-                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", Members = new List<User>() {user}};
+                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", Memberships = new List<Membership>()};
+            team.Memberships.Add(new Membership(){UserId = user.Id,TeamId = team.Id});
+            
             this.users.Add(user);
             this.teams.Add(team);
 
@@ -175,7 +191,7 @@ namespace ModernPlayerManagementAPITests
             this.teamService.removePlayer(team.Id, user.Id);
 
             // Then
-            Assert.Equal(0, this.teams[0].Members.Count);
+            Assert.Equal(0, this.teams[0].Memberships.Count);
         }
 
         [Fact]
@@ -184,7 +200,7 @@ namespace ModernPlayerManagementAPITests
             this.setup();
             // Given
             var team = new Team
-                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", Members = new List<User>() { }};
+                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", Memberships = new List<Membership>() { }};
             this.teams.Add(team);
 
             // When 
@@ -201,7 +217,7 @@ namespace ModernPlayerManagementAPITests
             this.setup();
             // Given
             var team = new Team
-                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", Members = new List<User>() { }};
+                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", Memberships = new List<Membership>() { }};
             this.teams.Add(team);
 
             // When 

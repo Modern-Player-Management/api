@@ -12,5 +12,18 @@ namespace ModernPlayerManagementAPI.Database
         public DbSet<User> Users { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<DbFile> Files { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Membership>()
+                .HasOne(m => m.User)
+                .WithMany(u => u.Memberships)
+                .HasForeignKey(m => m.UserId);
+
+            modelBuilder.Entity<Membership>()
+                .HasOne(m => m.Team)
+                .WithMany(t => t.Memberships)
+                .HasForeignKey(m => m.TeamId);
+        }
     }
 }

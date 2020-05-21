@@ -68,9 +68,10 @@ namespace ModernPlayerManagementAPITests
             var team2 = new Team
             {
                 Id = Guid.NewGuid(), Created = DateTime.Now, ManagerId = manager.Id, Name = "Test Team 2",
-                Members = new List<User> {user}
             };
             context.Teams.Add(team2);
+
+            team2.Memberships = new List<Membership> {new Membership() {UserId = user.Id, TeamId = team2.Id}};
 
             context.SaveChanges();
 
@@ -81,7 +82,7 @@ namespace ModernPlayerManagementAPITests
             // Then
             Assert.Equal(2, result.Count);
         }
-        
+
         [Fact]
         public void Get_Teams_Test()
         {
@@ -103,7 +104,7 @@ namespace ModernPlayerManagementAPITests
                 {Id = Guid.NewGuid(), Created = DateTime.Now, ManagerId = manager2.Id, Name = "Test Team 2"};
             context.Teams.Add(team3);
             context.SaveChanges();
-            
+
             // When 
             TeamRepository repo = new TeamRepository(context);
             List<Team> result = repo.getTeams().ToList();

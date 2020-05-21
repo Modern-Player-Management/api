@@ -155,7 +155,11 @@ namespace ModernPlayerManagementAPI.Services
         public void DeleteTeam(Guid teamId)
         {
             var team = this.teamRepository.getTeam(teamId);
-            this._filesService.Delete(Guid.Parse(team.Image.Split("/").Last()));
+            if (team.Image != null)
+            {
+                this._filesService.Delete(Guid.Parse(team.Image.Split("/").Last()));
+            }
+
             this.teamRepository.Delete(teamId);
         }
     }

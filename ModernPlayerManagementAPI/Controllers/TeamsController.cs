@@ -14,7 +14,7 @@ namespace ModernPlayerManagementAPI.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [ProducesResponseType(typeof(TeamDTO), 401)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class TeamsController : ControllerBase
     {
         private readonly ITeamService _teamService;

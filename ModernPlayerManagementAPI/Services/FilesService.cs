@@ -29,5 +29,10 @@ namespace ModernPlayerManagementAPI.Services
         {
             return this.filesRepository.GetById(fileId);
         }
+
+        public void Delete(Guid fileId)
+        {
+            this.filesRepository.Delete(fileId);
+        }
     }
 }

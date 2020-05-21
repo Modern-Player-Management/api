@@ -7,5 +7,6 @@ namespace ModernPlayerManagementAPI.Services
     {
         Guid Upload(string fileName, byte[] fileData);
         DbFile Download(Guid fileId);
+        void Delete(Guid fileId);
     }
 }

@@ -80,12 +80,13 @@ namespace ModernPlayerManagementAPITests
 
 
             var userRepository = new Mock<IUserRepository>();
+            var fileService = new Mock<IFilesService>();
             userRepository.Setup(mock => mock.GetById(It.IsAny<Guid>()))
                 .Returns<Guid>(userId => this.users.Find(user => user.Id == userId));
 
             var mockMapper = new MapperConfiguration(cfg => { cfg.AddProfile(new Mappings()); });
             var mapper = mockMapper.CreateMapper();
-            teamService = new TeamService(teamRepository.Object, userRepository.Object, mapper);
+            teamService = new TeamService(teamRepository.Object, userRepository.Object, mapper,fileService.Object);
         }
 
         [Fact]

@@ -7,6 +7,8 @@ namespace ModernPlayerManagementAPI.Models.DTOs
     {
         public Guid Id{ get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
+        public string Image { get; set; }
         public UserDTO Manager { get; set; }
         public bool isCurrentUserManager { get; set; }
         public ICollection<UserDTO> Memberships { get; set; }

@@ -39,7 +39,8 @@ namespace ModernPlayerManagementAPI.Controllers
                 Username = user.Username,
                 Email = user.Email,
                 Token = user.Token,
-                Id = user.Id
+                Id = user.Id,
+                Image = user.Image
             };
             
             return Ok(responseDTO);

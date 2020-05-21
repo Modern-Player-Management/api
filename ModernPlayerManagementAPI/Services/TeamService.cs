@@ -13,12 +13,14 @@ namespace ModernPlayerManagementAPI.Services
         private readonly ITeamRepository teamRepository;
         private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
+        private readonly IFilesService _filesService;
 
-        public TeamService(ITeamRepository teamRepository, IUserRepository userRepository, IMapper mapper)
+        public TeamService(ITeamRepository teamRepository, IUserRepository userRepository, IMapper mapper,IFilesService filesService)
         {
             this.teamRepository = teamRepository;
             this.userRepository = userRepository;
             this.mapper = mapper;
+            this._filesService = filesService;
         }
 
         public TeamDTO createTeam(UpsertTeamDTO teamDto, Guid currentUserId)
@@ -26,7 +28,9 @@ namespace ModernPlayerManagementAPI.Services
             var team = new Team()
             {
                 Name = teamDto.Name,
-                ManagerId = currentUserId
+                ManagerId = currentUserId,
+                Description = teamDto.Description,
+                Image = teamDto.Image
             };
             this.teamRepository.Insert(team);
 
@@ -49,7 +53,9 @@ namespace ModernPlayerManagementAPI.Services
                         };
                     })
                     .ToList(),
-                Created = team.Created
+                Created = team.Created,
+                Description = team.Description,
+                Image = team.Image
             };
 
             return teamDTO;
@@ -75,8 +81,11 @@ namespace ModernPlayerManagementAPI.Services
                     Memberships = team.Memberships.Select(membership => new UserDTO()
                     {
                         Id = membership.UserId, Created = membership.User.Created, Email = membership.User.Email,
-                        Username = membership.User.Username
-                    }).ToList()
+                        Username = membership.User.Username,
+                        Image = membership.User.Image
+                    }).ToList(),
+                    Description = team.Description,
+                    Image = team.Image
                 };
                 return dto;
             }).ToList();
@@ -124,13 +133,29 @@ namespace ModernPlayerManagementAPI.Services
 
         public void UpdateTeam(Guid teamId, UpsertTeamDTO teamDto)
         {
+
+            
             var team = this.teamRepository.getTeam(teamId);
-            team.Name = teamDto.Name;
+
+            if (teamDto.Image != team.Image)
+            {
+                if (team.Image != null)
+                {
+                    this._filesService.Delete(Guid.Parse(team.Image.Split("/").Last()));
+                }
+
+                team.Image = teamDto.Image;
+            }
+            
+            team.Name = teamDto?.Name;
+            team.Description = teamDto?.Description;
             this.teamRepository.Update(team);
         }
 
         public void DeleteTeam(Guid teamId)
         {
+            var team = this.teamRepository.getTeam(teamId);
+            this._filesService.Delete(Guid.Parse(team.Image.Split("/").Last()));
             this.teamRepository.Delete(teamId);
         }
     }

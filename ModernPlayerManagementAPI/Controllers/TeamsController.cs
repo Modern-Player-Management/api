@@ -36,8 +36,7 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult CreateTeam([FromBody] UpsertTeamDTO dto)
         {
-
-            var team = this._teamService.createTeam(dto,getCurrentUserId());
+            var team = this._teamService.createTeam(dto, getCurrentUserId());
 
             return Created($"api/Teams/${team.Id}", team);
         }
@@ -61,18 +60,28 @@ namespace ModernPlayerManagementAPI.Controllers
         [HttpPost("{teamId:Guid}/player")]
         public IActionResult AddPlayerToTeam(Guid teamId, [FromBody] UserDTO dto)
         {
+            if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
+            {
+                return Unauthorized("You are not the manager of this team");
+            }
+
             this._teamService.addPlayer(teamId, dto);
             return Ok();
         }
-        
+
         /// <summary>
         /// Removes a player from a team
         /// </summary>
         /// <param name="teamId">Id of the team from which the player should be removed</param>
         /// <param name="userId">Id of the user to remove from a team</param>
         [HttpDelete("{teamId:Guid}/player")]
-        public IActionResult RemovePlayerToTeam(Guid teamId,[FromBody] UserDTO dto)
+        public IActionResult RemovePlayerToTeam(Guid teamId, [FromBody] UserDTO dto)
         {
+            if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
+            {
+                return Unauthorized("You are not the manager of this team");
+            }
+
             this._teamService.removePlayer(teamId, dto);
             return Ok();
         }
@@ -85,11 +94,16 @@ namespace ModernPlayerManagementAPI.Controllers
         [HttpPut("{teamId:Guid}")]
         public IActionResult UpdateTeam(Guid teamId, [FromBody] UpsertTeamDTO dto)
         {
+            if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
+            {
+                return Unauthorized("You are not the manager of this team");
+            }
+
             this._teamService.UpdateTeam(teamId, dto);
 
             return Ok();
         }
-        
+
         /// <summary>
         /// Deletes a team
         /// </summary>
@@ -97,6 +111,11 @@ namespace ModernPlayerManagementAPI.Controllers
         [HttpDelete("{teamId:Guid}")]
         public IActionResult DeleteTeam(Guid teamId)
         {
+            if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
+            {
+                return Unauthorized("You are not the manager of this team");
+            }
+
             this._teamService.DeleteTeam(teamId);
 
             return Ok();

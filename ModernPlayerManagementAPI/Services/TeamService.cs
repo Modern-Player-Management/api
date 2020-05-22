@@ -23,6 +23,13 @@ namespace ModernPlayerManagementAPI.Services
             this._filesService = filesService;
         }
 
+        public bool IsUserTeamManager(Guid teamId, Guid userId)
+        {
+            var team = this.teamRepository.getTeam(teamId);
+
+            return team.ManagerId == userId;
+        }
+        
         public TeamDTO createTeam(UpsertTeamDTO teamDto, Guid currentUserId)
         {
             var team = new Team()

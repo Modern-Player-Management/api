@@ -77,7 +77,7 @@ namespace ModernPlayerManagementAPI.Services
                     Manager = mapper.Map<UserDTO>(team.Manager),
                     Players = team.Players.Select(membership => new UserDTO()
                     {
-                        Id = membership.UserId, Created = membership.User.Created, Email = membership.User.Email,
+                        Id = membership.UserId,
                         Username = membership.User.Username,
                         Image = membership.User.Image
                     }).ToList(),

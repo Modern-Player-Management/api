@@ -28,6 +28,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <param name="file">The file as multipart formdata</param>
         /// <returns>A DTO containing infos about the saved files and its location</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(DbFileDTO), StatusCodes.Status200OK)]
         public IActionResult Upload(IFormFile file)
         {
             var stream = new MemoryStream();
@@ -42,6 +43,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <param name="fileId">Id of the file</param>
         /// <returns>The file as octet stream</returns>
         [HttpGet("{fileId:Guid}")]
+        [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
         public IActionResult Download(Guid fileId)
         {
             var dbFile = this._filesService.Download(fileId);

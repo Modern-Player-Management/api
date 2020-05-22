@@ -58,7 +58,9 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <param name="teamId">Id of the team in which the player should be added</param>
         /// <param name="playerId">Id of the user to add in a team</param>
         [HttpPost("{teamId:Guid}/player/{playerId:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult AddPlayerToTeam(Guid teamId, Guid playerId)
+        
         {
             if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
             {
@@ -75,6 +77,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <param name="teamId">Id of the team from which the player should be removed</param>
         /// <param name="playerId">Id of the user to remove from a team</param>
         [HttpDelete("{teamId:Guid}/player/{playerId:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult RemovePlayerToTeam(Guid teamId, Guid playerId)
         {
             if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
@@ -92,6 +95,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <param name="teamId">Id of the team to update</param>
         /// <param name="dto">DTO containing the new info of the team</param>
         [HttpPut("{teamId:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult UpdateTeam(Guid teamId, [FromBody] UpsertTeamDTO dto)
         {
             if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
@@ -109,6 +113,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// </summary>
         /// <param name="teamId">Id of the team to delete</param>
         [HttpDelete("{teamId:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult DeleteTeam(Guid teamId)
         {
             if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +30,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <param name="search">The string to search for</param>
         /// <returns>A list of users whom username contains the search string</returns>
         [HttpGet]
+        [Route("search")]
         [ProducesResponseType(typeof(ICollection<UserDTO>), StatusCodes.Status200OK)]
         public IActionResult SearchUser([FromQuery(Name = "search")] string search)
         {
@@ -40,7 +42,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// </summary>
         /// <param name="username">The username of the user to get</param>
         /// <returns>Infos about the users</returns>
-        [HttpGet("{username:string}")]
+        [HttpGet("{username}")]
         [ProducesResponseType(typeof(UserDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetUser(string username)
@@ -58,10 +60,25 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok(dto);
         }
         
-        [HttpPut]
-        public IActionResult UpdateUser([FromBody] UpdateUserDTO dto)
+        /// <summary>
+        /// Updates a user
+        /// </summary>
+        /// <param name="dto">New users infos</param>
+        /// <param name="userId">Id of the user to update</param>
+        [HttpPut("{userId:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult UpdateUser([FromBody] UpdateUserDTO dto, Guid userId)
         {
-            this._userService.Update(dto);
+            try
+            {
+                this._userService.Update(dto, userId);
+            }
+            catch
+            {
+                return NotFound();
+            }
+            
             return Ok();
         }
     }

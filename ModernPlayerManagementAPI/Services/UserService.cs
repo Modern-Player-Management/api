@@ -91,9 +91,9 @@ namespace ModernPlayerManagementAPI.Services
             return user;
         }
 
-        public void Update(UpdateUserDTO dto)
+        public void Update(UpdateUserDTO dto, Guid userId)
         {
-            var user = this._userRepository.GetById(dto.Id);
+            var user = this._userRepository.GetById(userId);
             if (user.Image != dto.Image && dto.Image != null)
             {
                 if (user.Image != null)

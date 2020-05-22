@@ -11,7 +11,7 @@ namespace ModernPlayerManagementAPI.Services
         TeamDTO getTeamById(Guid id);
         ICollection<TeamDTO> getTeams(Guid userId);
         void addPlayer(Guid teamId, UserDTO player);
-        void removePlayer(Guid teamId, Guid playerId);
+        void removePlayer(Guid teamId, UserDTO dto);
         void UpdateTeam(Guid teamId, UpsertTeamDTO team);
         void DeleteTeam(Guid Id);
     }

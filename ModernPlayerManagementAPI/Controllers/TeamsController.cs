@@ -69,11 +69,11 @@ namespace ModernPlayerManagementAPI.Controllers
         /// Removes a player from a team
         /// </summary>
         /// <param name="teamId">Id of the team from which the player should be removed</param>
-        /// <param name="userId"> Dto containing the Id of the user to remove from a team</param>
-        [HttpDelete("{teamId:Guid}/player/{userId:Guid}")]
-        public IActionResult RemovePlayerToTeam(Guid teamId, Guid userId)
+        /// <param name="userId">Id of the user to remove from a team</param>
+        [HttpDelete("{teamId:Guid}/player")]
+        public IActionResult RemovePlayerToTeam(Guid teamId,[FromBody] UserDTO dto)
         {
-            this._teamService.removePlayer(teamId, userId);
+            this._teamService.removePlayer(teamId, dto);
             return Ok();
         }
 

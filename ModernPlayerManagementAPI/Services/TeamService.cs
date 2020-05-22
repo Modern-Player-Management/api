@@ -116,13 +116,26 @@ namespace ModernPlayerManagementAPI.Services
             }
         }
 
-        public void removePlayer(Guid teamId, Guid playerId)
+        public void removePlayer(Guid teamId, UserDTO dto)
         {
+            User player;
+            if (dto.Id != Guid.Empty)
+            {
+                player = this.userRepository.GetById(dto.Id);
+            }
+            else if (dto.Username != null)
+            {
+                player = this.userRepository.GetUserByUsername(dto.Username);
+            }
+            else
+            {
+               throw new ArgumentException("You should provide either the username or the Id of the user");
+            }
+            
             var team = this.teamRepository.getTeam(teamId);
-            var player = this.userRepository.GetById(playerId);
             if (team.Memberships.Select(member => member.UserId).Contains(player.Id))
             {
-                team.Memberships.Remove(team.Memberships.First(membership => membership.UserId == playerId));
+                team.Memberships.Remove(team.Memberships.First(membership => membership.UserId == player.Id));
                 this.teamRepository.Update(team);
             }
             else
@@ -130,7 +143,7 @@ namespace ModernPlayerManagementAPI.Services
                 throw new ArgumentException("Player is not in the team");
             }
         }
-
+        
         public void UpdateTeam(Guid teamId, UpsertTeamDTO teamDto)
         {
 
@@ -162,5 +175,7 @@ namespace ModernPlayerManagementAPI.Services
 
             this.teamRepository.Delete(teamId);
         }
+
+
     }
 }

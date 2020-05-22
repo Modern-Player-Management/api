@@ -57,15 +57,15 @@ namespace ModernPlayerManagementAPI.Controllers
         /// </summary>
         /// <param name="teamId">Id of the team in which the player should be added</param>
         /// <param name="dto">A Dto containing the Id of the user to add in a team</param>
-        [HttpPost("{teamId:Guid}/player")]
-        public IActionResult AddPlayerToTeam(Guid teamId, [FromBody] UserDTO dto)
+        [HttpPost("{teamId:Guid}/player/{playerId:Guid}")]
+        public IActionResult AddPlayerToTeam(Guid teamId, Guid playerId)
         {
             if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
             {
                 return Unauthorized("You are not the manager of this team");
             }
 
-            this._teamService.addPlayer(teamId, dto);
+            this._teamService.addPlayer(teamId, new UserDTO(){Id = playerId});
             return Ok();
         }
 
@@ -74,15 +74,15 @@ namespace ModernPlayerManagementAPI.Controllers
         /// </summary>
         /// <param name="teamId">Id of the team from which the player should be removed</param>
         /// <param name="userId">Id of the user to remove from a team</param>
-        [HttpDelete("{teamId:Guid}/player")]
-        public IActionResult RemovePlayerToTeam(Guid teamId, [FromBody] UserDTO dto)
+        [HttpDelete("{teamId:Guid}/player/{playerId:Guid}")]
+        public IActionResult RemovePlayerToTeam(Guid teamId, Guid playerId)
         {
             if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
             {
                 return Unauthorized("You are not the manager of this team");
             }
 
-            this._teamService.removePlayer(teamId, dto);
+            this._teamService.removePlayer(teamId, new UserDTO(){Id = playerId});
             return Ok();
         }
 

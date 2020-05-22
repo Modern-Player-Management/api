@@ -64,5 +64,6 @@ namespace ModernPlayerManagementAPI.Models.Repository
             _entities.Remove(entity);
             this._context.SaveChanges();
         }
+        
     }
 }

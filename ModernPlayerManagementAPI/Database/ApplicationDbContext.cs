@@ -22,7 +22,7 @@ namespace ModernPlayerManagementAPI.Database
 
             modelBuilder.Entity<Membership>()
                 .HasOne(m => m.Team)
-                .WithMany(t => t.Memberships)
+                .WithMany(t => t.Players)
                 .HasForeignKey(m => m.TeamId);
         }
     }

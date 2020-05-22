@@ -49,7 +49,7 @@ namespace ModernPlayerManagementAPI.Services
                 Name = team.Name,
                 isCurrentUserManager = true,
                 Manager = mapper.Map<UserDTO>(team.Manager),
-                Memberships = team.Memberships.Select(member =>
+                Memberships = team.Players.Select(member =>
                     {
                         return new UserDTO()
                         {
@@ -85,7 +85,7 @@ namespace ModernPlayerManagementAPI.Services
                     Id = team.Id,
                     isCurrentUserManager = team.Manager.Id == userId,
                     Manager = mapper.Map<UserDTO>(team.Manager),
-                    Memberships = team.Memberships.Select(membership => new UserDTO()
+                    Memberships = team.Players.Select(membership => new UserDTO()
                     {
                         Id = membership.UserId, Created = membership.User.Created, Email = membership.User.Email,
                         Username = membership.User.Username,
@@ -116,9 +116,9 @@ namespace ModernPlayerManagementAPI.Services
                 throw new ArgumentException("You should provide either the username or the Id of the user");
             }
 
-            if (!team.Memberships.Select(member => member.UserId).Contains(player.Id))
+            if (!team.Players.Select(member => member.UserId).Contains(player.Id))
             {
-                team.Memberships.Add(new Membership() {TeamId = teamId, UserId = player.Id});
+                team.Players.Add(new Membership() {TeamId = teamId, UserId = player.Id});
                 this.teamRepository.Update(team);
             }
         }
@@ -140,9 +140,9 @@ namespace ModernPlayerManagementAPI.Services
             }
             
             var team = this.teamRepository.getTeam(teamId);
-            if (team.Memberships.Select(member => member.UserId).Contains(player.Id))
+            if (team.Players.Select(member => member.UserId).Contains(player.Id))
             {
-                team.Memberships.Remove(team.Memberships.First(membership => membership.UserId == player.Id));
+                team.Players.Remove(team.Players.First(membership => membership.UserId == player.Id));
                 this.teamRepository.Update(team);
             }
             else

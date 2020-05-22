@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ModernPlayerManagementAPI.Models.DTOs;
 
 namespace ModernPlayerManagementAPI.Models.Repository
 {

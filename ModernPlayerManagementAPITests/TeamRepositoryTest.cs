@@ -71,7 +71,7 @@ namespace ModernPlayerManagementAPITests
             };
             context.Teams.Add(team2);
 
-            team2.Memberships = new List<Membership> {new Membership() {UserId = user.Id, TeamId = team2.Id}};
+            team2.Players = new List<Membership> {new Membership() {UserId = user.Id, TeamId = team2.Id}};
 
             context.SaveChanges();
 

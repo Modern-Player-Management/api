@@ -21,6 +21,12 @@ namespace ModernPlayerManagementAPI.Controllers
             _filesService = filesService;
         }
 
+        [HttpGet]
+        public IActionResult SearchUser([FromQuery(Name = "search")] string search)
+        {
+            return Ok(this._userService.SearchUser(search));
+        }
+        
         [HttpPut]
         public IActionResult UpdateUser([FromBody] UpdateUserDTO dto)
         {

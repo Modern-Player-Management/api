@@ -1,4 +1,6 @@
-﻿using ModernPlayerManagementAPI.Models;
+﻿using System.Collections;
+using System.Collections.Generic;
+using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
 
 namespace ModernPlayerManagementAPI.Services
@@ -9,5 +11,6 @@ namespace ModernPlayerManagementAPI.Services
         User Authenticate(string username, string password);
         User Register(string username, string email, string password);
         void Update(UpdateUserDTO dto);
+        ICollection<UserDTO> SearchUser(string search);
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
+using AutoMapper;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ModernPlayerManagementAPI.Models;
@@ -14,17 +16,19 @@ namespace ModernPlayerManagementAPI.Services
 {
     public class UserService : IUserService
     {
-        private IRepository<User> _userRepository { get; set; }
+        private IUserRepository _userRepository { get; set; }
         private readonly AppSettings _appSettings;
         private readonly IFilesService _filesService;
         private readonly IEmailValidator _emailValidator;
+        private readonly IMapper _mapper;
 
-        public UserService(IRepository<User> userRepository,IOptions<AppSettings> appSettings, IFilesService filesService, IEmailValidator emailValidator)
+        public UserService(IOptions<AppSettings> appSettings, IFilesService filesService, IEmailValidator emailValidator, IMapper mapper, IUserRepository userRepository)
         {
-            _appSettings = appSettings.Value;
-            _userRepository = userRepository;
+            _appSettings = appSettings?.Value;
             _filesService = filesService;
             _emailValidator = emailValidator;
+            _mapper = mapper;
+            _userRepository = userRepository;
         }
 
         public bool IsUniqueUser(string username)
@@ -123,6 +127,11 @@ namespace ModernPlayerManagementAPI.Services
                 }
             }
             this._userRepository.Update(user);
+        }
+
+        public ICollection<UserDTO> SearchUser(string search)
+        {
+            return this._userRepository.findUsersByUsernameContains(search).Select(user => this._mapper.Map<UserDTO>(user)).ToList();
         }
 
         private string ValidatePassword(string password)

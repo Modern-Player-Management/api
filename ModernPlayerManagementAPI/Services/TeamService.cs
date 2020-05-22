@@ -49,17 +49,7 @@ namespace ModernPlayerManagementAPI.Services
                 Name = team.Name,
                 isCurrentUserManager = true,
                 Manager = mapper.Map<UserDTO>(team.Manager),
-                Players = team.Players.Select(member =>
-                    {
-                        return new UserDTO()
-                        {
-                            Created = member.User.Created,
-                            Id = member.UserId,
-                            Email = member.User.Email,
-                            Username = member.User.Username
-                        };
-                    })
-                    .ToList(),
+                Players = new List<UserDTO>(),
                 Created = team.Created,
                 Description = team.Description,
                 Image = team.Image

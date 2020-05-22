@@ -22,6 +22,11 @@ namespace ModernPlayerManagementAPI.Controllers
             _filesService = filesService;
         }
 
+        /// <summary>
+        /// Saves a file in the backend
+        /// </summary>
+        /// <param name="file">The file as multipart formdata</param>
+        /// <returns>A DTO containing infos about the saved files and its location</returns>
         [HttpPost]
         public IActionResult Upload(IFormFile file)
         {
@@ -31,6 +36,11 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok(new DbFileDTO() {Id = fileId, Name = file.FileName, Path = new Uri($"{Request.GetDisplayUrl()}/{fileId}").ToString()});
         }
 
+        /// <summary>
+        /// Downloads a file from the backend
+        /// </summary>
+        /// <param name="fileId">Id of the file</param>
+        /// <returns>The file as octet stream</returns>
         [HttpGet("{fileId:Guid}")]
         public IActionResult Download(Guid fileId)
         {

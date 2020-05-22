@@ -56,7 +56,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// Adds a player to a team
         /// </summary>
         /// <param name="teamId">Id of the team in which the player should be added</param>
-        /// <param name="dto">A Dto containing the Id of the user to add in a team</param>
+        /// <param name="playerId">Id of the user to add in a team</param>
         [HttpPost("{teamId:Guid}/player/{playerId:Guid}")]
         public IActionResult AddPlayerToTeam(Guid teamId, Guid playerId)
         {
@@ -73,7 +73,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// Removes a player from a team
         /// </summary>
         /// <param name="teamId">Id of the team from which the player should be removed</param>
-        /// <param name="userId">Id of the user to remove from a team</param>
+        /// <param name="playerId">Id of the user to remove from a team</param>
         [HttpDelete("{teamId:Guid}/player/{playerId:Guid}")]
         public IActionResult RemovePlayerToTeam(Guid teamId, Guid playerId)
         {

@@ -12,5 +12,6 @@ namespace ModernPlayerManagementAPI.Services
         User Register(string username, string email, string password);
         void Update(UpdateUserDTO dto);
         ICollection<UserDTO> SearchUser(string search);
+        UserDTO GetFromUsername(string username);
     }
 }

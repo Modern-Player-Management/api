@@ -134,6 +134,11 @@ namespace ModernPlayerManagementAPI.Services
             return this._userRepository.findUsersByUsernameContains(search).Select(user => this._mapper.Map<UserDTO>(user)).ToList();
         }
 
+        public UserDTO GetFromUsername(string username)
+        {
+            return this._mapper.Map<UserDTO>(this._userRepository.GetUserByUsername(username));
+        }
+
         private string ValidatePassword(string password)
         {
             if (!new Regex(@"(?=.*[a-z])").IsMatch(password))

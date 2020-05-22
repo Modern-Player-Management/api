@@ -49,7 +49,7 @@ namespace ModernPlayerManagementAPI.Services
                 Name = team.Name,
                 isCurrentUserManager = true,
                 Manager = mapper.Map<UserDTO>(team.Manager),
-                Memberships = team.Players.Select(member =>
+                Players = team.Players.Select(member =>
                     {
                         return new UserDTO()
                         {
@@ -85,7 +85,7 @@ namespace ModernPlayerManagementAPI.Services
                     Id = team.Id,
                     isCurrentUserManager = team.Manager.Id == userId,
                     Manager = mapper.Map<UserDTO>(team.Manager),
-                    Memberships = team.Players.Select(membership => new UserDTO()
+                    Players = team.Players.Select(membership => new UserDTO()
                     {
                         Id = membership.UserId, Created = membership.User.Created, Email = membership.User.Email,
                         Username = membership.User.Username,

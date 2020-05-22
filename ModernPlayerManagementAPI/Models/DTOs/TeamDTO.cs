@@ -11,7 +11,7 @@ namespace ModernPlayerManagementAPI.Models.DTOs
         public string Image { get; set; }
         public UserDTO Manager { get; set; }
         public bool isCurrentUserManager { get; set; }
-        public ICollection<UserDTO> Memberships { get; set; }
+        public ICollection<UserDTO> Players { get; set; }
         public DateTime Created { get; set; }
     }
 }

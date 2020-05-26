@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
 
 namespace ModernPlayerManagementAPI.Services

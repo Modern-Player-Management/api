@@ -9,6 +9,7 @@ namespace ModernPlayerManagementAPI.Middlewares
     public class ErrorHandlingMiddleware
     {
         private readonly RequestDelegate next;
+
         public ErrorHandlingMiddleware(RequestDelegate next)
         {
             this.next = next;
@@ -30,11 +31,11 @@ namespace ModernPlayerManagementAPI.Middlewares
         {
             var code = HttpStatusCode.InternalServerError; // 500 if unexpected
 
-            if      (ex is ArgumentException)     code = HttpStatusCode.BadRequest;
+            if (ex is ArgumentException) code = HttpStatusCode.BadRequest;
 
-            var result = JsonConvert.SerializeObject(new { error = ex.Message });
+            var result = JsonConvert.SerializeObject(new {error = ex.Message});
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)code;
+            context.Response.StatusCode = (int) code;
             return context.Response.WriteAsync(result);
         }
     }

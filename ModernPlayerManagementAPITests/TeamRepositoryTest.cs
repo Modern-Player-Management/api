@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ModernPlayerManagementAPI.Database;
-using ModernPlayerManagementAPI.Migrations;
 using ModernPlayerManagementAPI.Models;
-using ModernPlayerManagementAPI.Models.Repository;
-using Moq;
+using ModernPlayerManagementAPI.Repositories;
 using Xunit;
 
 namespace ModernPlayerManagementAPITests
@@ -107,7 +104,7 @@ namespace ModernPlayerManagementAPITests
 
             // When 
             TeamRepository repo = new TeamRepository(context);
-            List<Team> result = repo.getTeams().ToList();
+            List<Team> result = repo.GetAll().ToList();
 
             // Then
             Assert.Equal(3, result.Count);

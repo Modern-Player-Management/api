@@ -16,8 +16,7 @@ using Microsoft.OpenApi.Models;
 using ModernPlayerManagementAPI.Database;
 using ModernPlayerManagementAPI.Mapper;
 using ModernPlayerManagementAPI.Middlewares;
-using ModernPlayerManagementAPI.Models.Repository;
-using ModernPlayerManagementAPI.Repository;
+using ModernPlayerManagementAPI.Repositories;
 using ModernPlayerManagementAPI.Services;
 using Npgsql;
 
@@ -139,7 +138,7 @@ namespace ModernPlayerManagementAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
 

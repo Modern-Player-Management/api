@@ -17,10 +17,7 @@ namespace ModernPlayerManagementAPI.Migrations
                     Email = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Users", x => x.Id); });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

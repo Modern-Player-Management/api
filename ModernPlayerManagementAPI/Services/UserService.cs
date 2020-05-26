@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
-using ModernPlayerManagementAPI.Models.Repository;
+using ModernPlayerManagementAPI.Repositories;
 
 namespace ModernPlayerManagementAPI.Services
 {
@@ -22,7 +22,8 @@ namespace ModernPlayerManagementAPI.Services
         private readonly IEmailValidator _emailValidator;
         private readonly IMapper _mapper;
 
-        public UserService(IOptions<AppSettings> appSettings, IFilesService filesService, IEmailValidator emailValidator, IMapper mapper, IUserRepository userRepository)
+        public UserService(IOptions<AppSettings> appSettings, IFilesService filesService,
+            IEmailValidator emailValidator, IMapper mapper, IUserRepository userRepository)
         {
             _appSettings = appSettings?.Value;
             _filesService = filesService;
@@ -78,7 +79,7 @@ namespace ModernPlayerManagementAPI.Services
             {
                 throw new ArgumentException(passwordValidity);
             }
-            
+
             User user = new User()
             {
                 Username = username,
@@ -87,7 +88,7 @@ namespace ModernPlayerManagementAPI.Services
             };
 
             this._userRepository.Insert(user);
-            
+
             return user;
         }
 
@@ -100,7 +101,7 @@ namespace ModernPlayerManagementAPI.Services
                 {
                     this._filesService.Delete(Guid.Parse(user.Image.Split("/").Last()));
                 }
-                
+
                 user.Image = dto.Image;
             }
 
@@ -126,12 +127,14 @@ namespace ModernPlayerManagementAPI.Services
                     throw new ArgumentException(passwordValidity);
                 }
             }
+
             this._userRepository.Update(user);
         }
 
         public ICollection<UserDTO> SearchUser(string search)
         {
-            return this._userRepository.findUsersByUsernameContains(search).Select(user => this._mapper.Map<UserDTO>(user)).ToList();
+            return this._userRepository.findUsersByUsernameContains(search)
+                .Select(user => this._mapper.Map<UserDTO>(user)).ToList();
         }
 
         public UserDTO GetFromUsername(string username)
@@ -145,14 +148,17 @@ namespace ModernPlayerManagementAPI.Services
             {
                 return "Invalid Password : At least one lowercase letter is required";
             }
+
             if (!new Regex(@"(?=.*[A-Z])").IsMatch(password))
             {
                 return "Invalid Password : At least one uppercase letter is required";
             }
+
             if (!new Regex(@"(?=.*\d)").IsMatch(password))
             {
                 return "Invalid Password : At least one number is required";
             }
+
             if (!new Regex(@"^.{8,32}$").IsMatch(password))
             {
                 return "Invalid Password : Password length : 8-32 characters";

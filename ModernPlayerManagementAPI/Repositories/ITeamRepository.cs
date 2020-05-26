@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using ModernPlayerManagementAPI.Models;
 
-namespace ModernPlayerManagementAPI.Models.Repository
+namespace ModernPlayerManagementAPI.Repositories
 {
     public interface ITeamRepository : IRepository<Team>
     {
-        ICollection<Team> getTeams();
-        Team getTeam(Guid id);
         ICollection<Team> getUserTeams(Guid userId);
-
     }
 }

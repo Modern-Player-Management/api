@@ -2,7 +2,7 @@
 
 namespace ModernPlayerManagementAPI.Models.DTOs
 {
-    public class UpdateUserDTO 
+    public class UpdateUserDTO
     {
         public Guid Id { get; set; }
         public string Password { get; set; }

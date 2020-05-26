@@ -2,8 +2,9 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ModernPlayerManagementAPI.Database;
+using ModernPlayerManagementAPI.Models;
 
-namespace ModernPlayerManagementAPI.Models.Repository
+namespace ModernPlayerManagementAPI.Repositories
 {
     public class UserRepository : Repository<User>, IUserRepository
     {

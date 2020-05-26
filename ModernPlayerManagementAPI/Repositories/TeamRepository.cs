@@ -4,10 +4,9 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using ModernPlayerManagementAPI.Database;
-using ModernPlayerManagementAPI.Migrations;
-using ModernPlayerManagementAPI.Services;
+using ModernPlayerManagementAPI.Models;
 
-namespace ModernPlayerManagementAPI.Models.Repository
+namespace ModernPlayerManagementAPI.Repositories
 {
     public class TeamRepository : Repository<Team>, ITeamRepository
     {
@@ -15,15 +14,14 @@ namespace ModernPlayerManagementAPI.Models.Repository
         {
         }
 
-        public ICollection<Team> getTeams()
+        public ICollection<Team> GetAll()
         {
             return GetTeamsEager().ToList();
         }
 
-
-        public Team getTeam(Guid id)
+        public Team GetById(Guid id)
         {
-            return (from team in this._context.Teams.Include(team => team.Manager).Include(team => team.Players)
+            return (from team in this.GetTeamsEager()
                 where team.Id == id
                 select team).First();
         }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModernPlayerManagementAPI.Models.DTOs;
-using ModernPlayerManagementAPI.Models.Repository;
 using ModernPlayerManagementAPI.Services;
 
 namespace ModernPlayerManagementAPI.Controllers
@@ -12,7 +11,7 @@ namespace ModernPlayerManagementAPI.Controllers
     {
         private readonly IUserService _userService;
         private readonly IEmailValidator _emailValidator;
-        
+
         public AuthController(IUserService userService, IEmailValidator emailValidator)
         {
             _userService = userService;
@@ -42,10 +41,10 @@ namespace ModernPlayerManagementAPI.Controllers
                 Id = user.Id,
                 Image = user.Image
             };
-            
+
             return Ok(responseDTO);
         }
-        
+
         /// <summary>
         /// Register a new user
         /// </summary>
@@ -65,8 +64,8 @@ namespace ModernPlayerManagementAPI.Controllers
             {
                 return BadRequest("Invalid Email");
             }
-            
-            var user = this._userService.Register(dto.Username, dto.Email,dto.Password);
+
+            var user = this._userService.Register(dto.Username, dto.Email, dto.Password);
             if (user == null)
             {
                 return BadRequest("Error registering");

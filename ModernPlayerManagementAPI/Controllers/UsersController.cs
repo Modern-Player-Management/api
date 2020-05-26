@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -59,7 +58,7 @@ namespace ModernPlayerManagementAPI.Controllers
 
             return Ok(dto);
         }
-        
+
         /// <summary>
         /// Updates a user
         /// </summary>
@@ -78,7 +77,7 @@ namespace ModernPlayerManagementAPI.Controllers
             {
                 return NotFound();
             }
-            
+
             return Ok();
         }
     }

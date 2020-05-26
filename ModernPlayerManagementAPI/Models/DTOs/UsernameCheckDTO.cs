@@ -4,7 +4,6 @@ namespace ModernPlayerManagementAPI.Models.DTOs
 {
     public class UsernameCheckDTO
     {
-        [Required]
-        public string Username { get; set; }
+        [Required] public string Username { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -60,14 +59,14 @@ namespace ModernPlayerManagementAPI.Controllers
         [HttpPost("{teamId:Guid}/player/{playerId:Guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult AddPlayerToTeam(Guid teamId, Guid playerId)
-        
+
         {
             if (!this._teamService.IsUserTeamManager(teamId, this.GetCurrentUserId()))
             {
                 return Unauthorized("You are not the manager of this team");
             }
 
-            this._teamService.addPlayer(teamId, new UserDTO(){Id = playerId});
+            this._teamService.addPlayer(teamId, new UserDTO() {Id = playerId});
             return Ok();
         }
 
@@ -85,7 +84,7 @@ namespace ModernPlayerManagementAPI.Controllers
                 return Unauthorized("You are not the manager of this team");
             }
 
-            this._teamService.removePlayer(teamId, new UserDTO(){Id = playerId});
+            this._teamService.removePlayer(teamId, new UserDTO() {Id = playerId});
             return Ok();
         }
 
@@ -133,7 +132,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <param name="dto">Infos about the event</param>
         /// <returns>Infos about the created event</returns>
         [HttpPost("{teamId:Guid}/events")]
-        [ProducesResponseType(typeof(EventDTO),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(EventDTO), StatusCodes.Status200OK)]
         public IActionResult AddEvent(Guid teamId, [FromBody] UpsertEventDTO dto)
         {
             if (this._teamService.IsUserTeamManager(teamId, this.GetCurrentUserId()))

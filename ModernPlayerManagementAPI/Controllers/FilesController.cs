@@ -34,7 +34,8 @@ namespace ModernPlayerManagementAPI.Controllers
             var stream = new MemoryStream();
             file.CopyTo(stream);
             var fileId = this._filesService.Upload(file.FileName, stream.ToArray());
-            return Ok(new DbFileDTO() {Id = fileId, Name = file.FileName, Path = new Uri($"{Request.GetDisplayUrl()}/{fileId}").ToString()});
+            return Ok(new DbFileDTO()
+                {Id = fileId, Name = file.FileName, Path = new Uri($"{Request.GetDisplayUrl()}/{fileId}").ToString()});
         }
 
         /// <summary>

@@ -9,6 +9,7 @@ namespace ModernPlayerManagementAPI.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
+
         public DateTime Created { get; set; }
     }
 }

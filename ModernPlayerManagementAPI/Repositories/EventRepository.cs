@@ -3,9 +3,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ModernPlayerManagementAPI.Database;
 using ModernPlayerManagementAPI.Models;
-using ModernPlayerManagementAPI.Models.Repository;
 
-namespace ModernPlayerManagementAPI.Repository
+namespace ModernPlayerManagementAPI.Repositories
 {
     public class EventRepository : Repository<Event>, IEventRepository
     {

@@ -25,6 +25,13 @@
     &lt;ProjectFile&gt;7E521710-B153-416D-9412-5E8E9DE095D8/f:TeamServiceTest.cs&lt;/ProjectFile&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8e57a195_002D8e78_002D42a7_002D8c2c_002D4f690b2d4781/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Session #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;ProjectFile&gt;7E521710-B153-416D-9412-5E8E9DE095D8/f:TeamRepositoryTest.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;ProjectFile&gt;7E521710-B153-416D-9412-5E8E9DE095D8/f:TeamServiceTest.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;ProjectFile&gt;7E521710-B153-416D-9412-5E8E9DE095D8/f:UserRepositoryTest.cs&lt;/ProjectFile&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=9cc352d4_002Dc6b0_002D4d93_002D9e82_002D096dcdc547ee/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
     &lt;ProjectFile&gt;7E521710-B153-416D-9412-5E8E9DE095D8/f:TeamRepositoryTest.cs&lt;/ProjectFile&gt;&#xD;

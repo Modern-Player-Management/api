@@ -1,4 +1,6 @@
-﻿namespace ModernPlayerManagementAPI.Services
+﻿using System.Net.Mail;
+
+namespace ModernPlayerManagementAPI.Services
 {
     public class EmailValidator : IEmailValidator
     {
@@ -6,7 +8,7 @@
         {
             try
             {
-                var addr = new System.Net.Mail.MailAddress(email);
+                var addr = new MailAddress(email);
                 return addr.Address == email;
             }
             catch

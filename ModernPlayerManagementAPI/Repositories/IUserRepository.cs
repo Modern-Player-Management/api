@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using ModernPlayerManagementAPI.Models.DTOs;
+using ModernPlayerManagementAPI.Models;
 
-namespace ModernPlayerManagementAPI.Models.Repository
+namespace ModernPlayerManagementAPI.Repositories
 {
     public interface IUserRepository : IRepository<User>
     {

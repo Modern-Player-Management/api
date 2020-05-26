@@ -16,10 +16,7 @@ namespace ModernPlayerManagementAPI.Migrations
                     Name = table.Column<string>(nullable: true),
                     FileData = table.Column<byte[]>(nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Files", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Files", x => x.Id); });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

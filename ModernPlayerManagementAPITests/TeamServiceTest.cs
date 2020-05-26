@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using ModernPlayerManagementAPI.Mapper;
-using ModernPlayerManagementAPI.Migrations;
 using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
-using ModernPlayerManagementAPI.Models.Repository;
+using ModernPlayerManagementAPI.Repositories;
 using ModernPlayerManagementAPI.Services;
 using Moq;
 using Xunit;
@@ -18,11 +17,13 @@ namespace ModernPlayerManagementAPITests
         private List<Team> teams;
         private List<User> users;
         private TeamService teamService;
+        private List<Event> events;
 
         private void setup()
         {
             teams = new List<Team>();
-            this.users = new List<User>();
+            users = new List<User>();
+            events = new List<Event>();
 
             var teamRepository = new Mock<ITeamRepository>();
             teamRepository.Setup(mock => mock.Insert(It.IsAny<Team>())).Callback<Team>(team =>
@@ -30,7 +31,7 @@ namespace ModernPlayerManagementAPITests
                 team.Players ??= new List<Membership>();
                 teams.Add(team);
             });
-            teamRepository.Setup(mock => mock.getTeam(It.IsAny<Guid>()))
+            teamRepository.Setup(mock => mock.GetById(It.IsAny<Guid>()))
                 .Returns<Guid>(teamId =>
                 {
                     var team = this.teams.Find(team => team.Id == teamId);
@@ -67,6 +68,12 @@ namespace ModernPlayerManagementAPITests
                                 membership.Team = this.teams.First(team => team.Id == membership.TeamId);
                             }
 
+                            team.Events ??= new List<Event>();
+                            foreach (var evt in events.Where(evt => evt.TeamId == team.Id))
+                            {
+                                team.Events.Add(evt);
+                            }
+
                             return team;
                         }).ToList());
             teamRepository.Setup(mock => mock.Update(It.IsAny<Team>()))
@@ -89,7 +96,16 @@ namespace ModernPlayerManagementAPITests
 
             var mockMapper = new MapperConfiguration(cfg => { cfg.AddProfile(new Mappings()); });
             var mapper = mockMapper.CreateMapper();
-            teamService = new TeamService(teamRepository.Object, userRepository.Object, mapper, fileService.Object);
+
+            var eventRespository = new Mock<IEventRepository>();
+            eventRespository.Setup(mock => mock.GetById(It.IsAny<Guid>())).Returns<Guid>(eventId =>
+            {
+                return this.teams.Select(team => team.Events).SelectMany(events => events)
+                    .First(evt => evt.Id == eventId);
+            });
+
+            teamService = new TeamService(teamRepository.Object, userRepository.Object, mapper, fileService.Object,
+                eventRespository.Object);
         }
 
         [Fact]
@@ -133,9 +149,29 @@ namespace ModernPlayerManagementAPITests
             // Given
             var manager1 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var manager2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+            var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
 
             var team1 = new Team
-                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team 1", ManagerId = manager1.Id};
+            {
+                Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team 1", ManagerId = manager1.Id,
+                Events = new List<Event>()
+                {
+                    new Event()
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "Test Event",
+                        Description = "Test Event Description",
+                        Start = DateTime.Now,
+                        End = DateTime.Now,
+                        Discrepancies = new List<Discrepancy>()
+                            {new Discrepancy() {Created = DateTime.Now, Reason = "Test", User = user}},
+                        Participations = new List<Participation>()
+                            {new Participation() {Created = DateTime.Now, User = user}},
+                        Created = DateTime.Now,
+                        Type = Event.EventType.Coaching
+                    }
+                }
+            };
 
             var team2 = new Team
             {
@@ -154,6 +190,7 @@ namespace ModernPlayerManagementAPITests
             //Then
             Assert.Equal(2, getTeams.Count);
             Assert.Equal("Ombrelin", getTeams[0].Manager.Username);
+            Assert.Equal(1, getTeams[0].Events.Count);
         }
 
         [Fact]
@@ -238,6 +275,61 @@ namespace ModernPlayerManagementAPITests
 
             // Then
             Assert.Equal(0, this.teams.Count);
+        }
+
+        [Fact]
+        public void Add_Event_Test()
+        {
+            this.setup();
+            // Given
+            var team = new Team
+            {
+                Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team",
+                Players = new List<Membership>() { }, Events = new List<Event>()
+            };
+            this.teams.Add(team);
+
+            var evtDTO = new UpsertEventDTO()
+            {
+                Name = "Test Event",
+                Description = "Test Event Description",
+                Start = DateTime.Now,
+                End = DateTime.Now,
+                Type = Event.EventType.Coaching
+            };
+
+            // When
+            this.teamService.AddEvent(team.Id, evtDTO);
+
+            // Then
+            Assert.Equal(1, team.Events.Count());
+            Assert.Equal("Test Event", team.Events.First().Name);
+        }
+
+        [Fact]
+        void IsUserTeamManager_Test()
+        {
+            this.setup();
+            // Given
+            var user1 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+            var user2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+
+            var team = new Team
+            {
+                Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team",
+                Players = new List<Membership>() { }, Events = new List<Event>(),
+                ManagerId = user1.Id
+            };
+            this.teams.Add(team);
+
+
+            // When
+            bool result1 = this.teamService.IsUserTeamManager(team.Id, user1.Id);
+            bool result2 = this.teamService.IsUserTeamManager(team.Id, user2.Id);
+
+            // Then
+            Assert.Equal(true, result1);
+            Assert.Equal(false, result2);
         }
     }
 }

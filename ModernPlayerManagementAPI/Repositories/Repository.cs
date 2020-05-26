@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ModernPlayerManagementAPI.Database;
+using ModernPlayerManagementAPI.Models;
 
-namespace ModernPlayerManagementAPI.Models.Repository
+namespace ModernPlayerManagementAPI.Repositories
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
@@ -37,6 +38,7 @@ namespace ModernPlayerManagementAPI.Models.Repository
             {
                 throw new ArgumentNullException();
             }
+
             entity.Created = DateTime.Now;
             _entities.Add(entity);
             _context.SaveChanges();
@@ -64,6 +66,5 @@ namespace ModernPlayerManagementAPI.Models.Repository
             _entities.Remove(entity);
             this._context.SaveChanges();
         }
-        
     }
 }

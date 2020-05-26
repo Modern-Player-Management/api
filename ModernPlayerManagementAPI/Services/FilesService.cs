@@ -1,6 +1,6 @@
 ﻿using System;
 using ModernPlayerManagementAPI.Models;
-using ModernPlayerManagementAPI.Models.Repository;
+using ModernPlayerManagementAPI.Repositories;
 
 namespace ModernPlayerManagementAPI.Services
 {
@@ -20,7 +20,7 @@ namespace ModernPlayerManagementAPI.Services
                 Name = fileName,
                 FileData = fileData
             };
-            
+
             filesRepository.Insert(file);
             return file.Id;
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,8 +11,7 @@ namespace ModernPlayerManagementAPI.Models
         public string Image { get; set; }
         public Guid ManagerId { get; set; }
 
-        [ForeignKey("ManagerId")] 
-        public User Manager { get; set; }
+        [ForeignKey("ManagerId")] public User Manager { get; set; }
 
         public ICollection<Event> Events { get; set; }
 

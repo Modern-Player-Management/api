@@ -4,7 +4,7 @@ using System.Linq;
 using AutoMapper;
 using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
-using ModernPlayerManagementAPI.Models.Repository;
+using ModernPlayerManagementAPI.Repositories;
 
 namespace ModernPlayerManagementAPI.Services
 {
@@ -28,14 +28,14 @@ namespace ModernPlayerManagementAPI.Services
 
         public bool IsUserTeamManager(Guid teamId, Guid userId)
         {
-            var team = this.teamRepository.getTeam(teamId);
+            var team = this.teamRepository.GetById(teamId);
 
             return team.ManagerId == userId;
         }
 
         public EventDTO AddEvent(Guid teamId, UpsertEventDTO dto)
         {
-            var team = this.teamRepository.getTeam(teamId);
+            var team = this.teamRepository.GetById(teamId);
             var evt = new Event()
             {
                 Name = dto.Name,
@@ -82,7 +82,7 @@ namespace ModernPlayerManagementAPI.Services
             };
             this.teamRepository.Insert(team);
 
-            team = this.teamRepository.getTeam(team.Id);
+            team = this.teamRepository.GetById(team.Id);
 
             var teamDTO = new TeamDTO()
             {
@@ -102,7 +102,7 @@ namespace ModernPlayerManagementAPI.Services
 
         public TeamDTO getTeamById(Guid id)
         {
-            return this.mapper.Map<TeamDTO>(this.teamRepository.getTeam(id));
+            return this.mapper.Map<TeamDTO>(this.teamRepository.GetById(id));
         }
 
         public ICollection<TeamDTO> getTeams(Guid userId)
@@ -152,7 +152,7 @@ namespace ModernPlayerManagementAPI.Services
 
         public void addPlayer(Guid teamId, UserDTO playerDto)
         {
-            var team = this.teamRepository.getTeam(teamId);
+            var team = this.teamRepository.GetById(teamId);
 
             User player;
             if (playerDto.Id != Guid.Empty)
@@ -191,7 +191,7 @@ namespace ModernPlayerManagementAPI.Services
                 throw new ArgumentException("You should provide either the username or the Id of the user");
             }
 
-            var team = this.teamRepository.getTeam(teamId);
+            var team = this.teamRepository.GetById(teamId);
             if (team.Players.Select(member => member.UserId).Contains(player.Id))
             {
                 team.Players.Remove(team.Players.First(membership => membership.UserId == player.Id));
@@ -205,7 +205,7 @@ namespace ModernPlayerManagementAPI.Services
 
         public void UpdateTeam(Guid teamId, UpsertTeamDTO teamDto)
         {
-            var team = this.teamRepository.getTeam(teamId);
+            var team = this.teamRepository.GetById(teamId);
 
             if (teamDto.Image != team.Image)
             {
@@ -224,7 +224,7 @@ namespace ModernPlayerManagementAPI.Services
 
         public void DeleteTeam(Guid teamId)
         {
-            var team = this.teamRepository.getTeam(teamId);
+            var team = this.teamRepository.GetById(teamId);
             if (team.Image != null)
             {
                 this._filesService.Delete(Guid.Parse(team.Image.Split("/").Last()));

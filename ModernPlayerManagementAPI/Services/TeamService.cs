@@ -14,13 +14,16 @@ namespace ModernPlayerManagementAPI.Services
         private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
         private readonly IFilesService _filesService;
+        private readonly IEventRepository eventRepository;
 
-        public TeamService(ITeamRepository teamRepository, IUserRepository userRepository, IMapper mapper,IFilesService filesService)
+        public TeamService(ITeamRepository teamRepository, IUserRepository userRepository, IMapper mapper,
+            IFilesService filesService, IEventRepository eventRepository)
         {
             this.teamRepository = teamRepository;
             this.userRepository = userRepository;
             this.mapper = mapper;
             this._filesService = filesService;
+            this.eventRepository = eventRepository;
         }
 
         public bool IsUserTeamManager(Guid teamId, Guid userId)
@@ -29,7 +32,45 @@ namespace ModernPlayerManagementAPI.Services
 
             return team.ManagerId == userId;
         }
-        
+
+        public EventDTO AddEvent(Guid teamId, UpsertEventDTO dto)
+        {
+            var team = this.teamRepository.getTeam(teamId);
+            var evt = new Event()
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                Start = dto.Start,
+                End = dto.End,
+                Created = DateTime.Now,
+                Discrepancies = new List<Discrepancy>(),
+                Participations = team.Players.Select(membership => new Participation()
+                    {Created = DateTime.Now, Confirmed = false, UserId = membership.UserId}).ToList(),
+                Type = dto.Type
+            };
+            team.Events ??= new List<Event>();
+            team.Events.Add(evt);
+            this.teamRepository.Update(team);
+
+            evt = this.eventRepository.GetById(evt.Id);
+
+            var responseDTO = new EventDTO()
+            {
+                Id = evt.Id,
+                Name = evt.Name,
+                Description = evt.Description,
+                Start = evt.Start,
+                End = evt.End,
+                Type = evt.Type,
+                Participations = evt.Participations.Select(e => new ParticipationDTO()
+                    {Confirmed = e.Confirmed, UserId = e.UserId, Username = e.User.Username}).ToList(),
+                Discrepancies = new List<DiscrepancyDTO>()
+            };
+
+            return responseDTO;
+        }
+
+
         public TeamDTO createTeam(UpsertTeamDTO teamDto, Guid currentUserId)
         {
             var team = new Team()
@@ -52,7 +93,8 @@ namespace ModernPlayerManagementAPI.Services
                 Players = new List<UserDTO>(),
                 Created = team.Created,
                 Description = team.Description,
-                Image = team.Image
+                Image = team.Image,
+                Events = new List<EventDTO>()
             };
 
             return teamDTO;
@@ -82,7 +124,27 @@ namespace ModernPlayerManagementAPI.Services
                         Image = membership.User.Image
                     }).ToList(),
                     Description = team.Description,
-                    Image = team.Image
+                    Image = team.Image,
+                    Events = team.Events.Select(evt => new EventDTO()
+                    {
+                        Id = evt.Id,
+                        Name = evt.Name,
+                        Description = evt.Description,
+                        Start = evt.Start,
+                        End = evt.End,
+                        Type = evt.Type,
+                        Participations = evt.Participations.Select(e => new ParticipationDTO()
+                            {Confirmed = e.Confirmed, UserId = e.UserId, Username = e.User.Username}).ToList(),
+                        Discrepancies = evt.Discrepancies.Select(e => new DiscrepancyDTO()
+                        {
+                            Id = e.Id,
+                            DelayLength = e.DelayLength,
+                            Reason = e.Reason,
+                            Type = e.Type,
+                            UserId = e.UserId,
+                            Username = e.User.Username
+                        }).ToList()
+                    }).ToList()
                 };
                 return dto;
             }).ToList();
@@ -126,9 +188,9 @@ namespace ModernPlayerManagementAPI.Services
             }
             else
             {
-               throw new ArgumentException("You should provide either the username or the Id of the user");
+                throw new ArgumentException("You should provide either the username or the Id of the user");
             }
-            
+
             var team = this.teamRepository.getTeam(teamId);
             if (team.Players.Select(member => member.UserId).Contains(player.Id))
             {
@@ -140,11 +202,9 @@ namespace ModernPlayerManagementAPI.Services
                 throw new ArgumentException("Player is not in the team");
             }
         }
-        
+
         public void UpdateTeam(Guid teamId, UpsertTeamDTO teamDto)
         {
-
-            
             var team = this.teamRepository.getTeam(teamId);
 
             if (teamDto.Image != team.Image)
@@ -156,7 +216,7 @@ namespace ModernPlayerManagementAPI.Services
 
                 team.Image = teamDto.Image;
             }
-            
+
             team.Name = teamDto?.Name;
             team.Description = teamDto?.Description;
             this.teamRepository.Update(team);
@@ -172,7 +232,5 @@ namespace ModernPlayerManagementAPI.Services
 
             this.teamRepository.Delete(teamId);
         }
-
-
     }
 }

@@ -36,7 +36,7 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult CreateTeam([FromBody] UpsertTeamDTO dto)
         {
-            var team = this._teamService.createTeam(dto, getCurrentUserId());
+            var team = this._teamService.createTeam(dto, GetCurrentUserId());
 
             return Created($"api/Teams/${team.Id}", team);
         }
@@ -49,7 +49,7 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(typeof(ICollection<TeamDTO>), StatusCodes.Status200OK)]
         public IActionResult GetTeams()
         {
-            return Ok(this._teamService.getTeams(this.getCurrentUserId()));
+            return Ok(this._teamService.getTeams(this.GetCurrentUserId()));
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace ModernPlayerManagementAPI.Controllers
         public IActionResult AddPlayerToTeam(Guid teamId, Guid playerId)
         
         {
-            if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
+            if (!this._teamService.IsUserTeamManager(teamId, this.GetCurrentUserId()))
             {
                 return Unauthorized("You are not the manager of this team");
             }
@@ -80,7 +80,7 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult RemovePlayerToTeam(Guid teamId, Guid playerId)
         {
-            if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
+            if (!this._teamService.IsUserTeamManager(teamId, this.GetCurrentUserId()))
             {
                 return Unauthorized("You are not the manager of this team");
             }
@@ -98,7 +98,7 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult UpdateTeam(Guid teamId, [FromBody] UpsertTeamDTO dto)
         {
-            if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
+            if (!this._teamService.IsUserTeamManager(teamId, this.GetCurrentUserId()))
             {
                 return Unauthorized("You are not the manager of this team");
             }
@@ -116,7 +116,7 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult DeleteTeam(Guid teamId)
         {
-            if (!this._teamService.IsUserTeamManager(teamId, this.getCurrentUserId()))
+            if (!this._teamService.IsUserTeamManager(teamId, this.GetCurrentUserId()))
             {
                 return Unauthorized("You are not the manager of this team");
             }
@@ -126,7 +126,27 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok();
         }
 
-        private Guid getCurrentUserId()
+        /// <summary>
+        /// Add an event to a team
+        /// </summary>
+        /// <param name="teamId">Id of the team in which the team will be added</param>
+        /// <param name="dto">Infos about the event</param>
+        /// <returns>Infos about the created event</returns>
+        [HttpPost("{teamId:Guid}/events")]
+        [ProducesResponseType(typeof(EventDTO),StatusCodes.Status200OK)]
+        public IActionResult AddEvent(Guid teamId, [FromBody] UpsertEventDTO dto)
+        {
+            if (this._teamService.IsUserTeamManager(teamId, this.GetCurrentUserId()))
+            {
+                return Ok(this._teamService.AddEvent(teamId, dto));
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
+
+        private Guid GetCurrentUserId()
         {
             return Guid.Parse(User.FindFirst(ClaimTypes.Name)?.Value);
         }

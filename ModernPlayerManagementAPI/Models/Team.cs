@@ -15,6 +15,8 @@ namespace ModernPlayerManagementAPI.Models
         [ForeignKey("ManagerId")] 
         public User Manager { get; set; }
 
+        public ICollection<Event> Events { get; set; }
+
         public ICollection<Membership> Players { get; set; }
     }
 }

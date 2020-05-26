@@ -41,7 +41,13 @@ namespace ModernPlayerManagementAPI.Models.Repository
             return this._context.Teams
                 .Include(team => team.Manager)
                 .Include(team => team.Players)
-                .ThenInclude(membership => membership.User);
+                .ThenInclude(membership => membership.User)
+                .Include(team => team.Events)
+                .ThenInclude(evt => evt.Discrepancies)
+                .ThenInclude(evt => evt.User)
+                .Include(team => team.Events)
+                .ThenInclude(evt => evt.Participations)
+                .ThenInclude(part => part.User);
         }
     }
 }

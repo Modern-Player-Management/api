@@ -15,5 +15,6 @@ namespace ModernPlayerManagementAPI.Services
         void UpdateTeam(Guid teamId, UpsertTeamDTO team);
         void DeleteTeam(Guid Id);
         bool IsUserTeamManager(Guid teamId, Guid userId);
+        EventDTO AddEvent(Guid teamId, UpsertEventDTO dto);
     }
 }

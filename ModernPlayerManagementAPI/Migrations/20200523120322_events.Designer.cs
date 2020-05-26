@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ModernPlayerManagementAPI.Database;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,9 +10,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ModernPlayerManagementAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200523120322_events")]
+    partial class events
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,9 +49,6 @@ namespace ModernPlayerManagementAPI.Migrations
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("DelayLength")
-                        .HasColumnType("integer");
 
                     b.Property<Guid>("EventId")
                         .HasColumnType("uuid");
@@ -103,7 +102,7 @@ namespace ModernPlayerManagementAPI.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Events");
+                    b.ToTable("Event");
                 });
 
             modelBuilder.Entity("ModernPlayerManagementAPI.Models.Membership", b =>
@@ -214,7 +213,7 @@ namespace ModernPlayerManagementAPI.Migrations
             modelBuilder.Entity("ModernPlayerManagementAPI.Models.Discrepancy", b =>
                 {
                     b.HasOne("ModernPlayerManagementAPI.Models.Event", null)
-                        .WithMany("Discrepancies")
+                        .WithMany("Delays")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

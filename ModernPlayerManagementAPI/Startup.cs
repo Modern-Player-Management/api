@@ -17,6 +17,7 @@ using ModernPlayerManagementAPI.Database;
 using ModernPlayerManagementAPI.Mapper;
 using ModernPlayerManagementAPI.Middlewares;
 using ModernPlayerManagementAPI.Models.Repository;
+using ModernPlayerManagementAPI.Repository;
 using ModernPlayerManagementAPI.Services;
 using Npgsql;
 
@@ -46,6 +47,7 @@ namespace ModernPlayerManagementAPI
             services.AddScoped<ITeamService, TeamService>();
             services.AddScoped<IFilesService, FilesService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IEventRepository, EventRepository>();
             services.AddAutoMapper(typeof(Mappings));
 
             // ==================================== Swagger config =====================================================

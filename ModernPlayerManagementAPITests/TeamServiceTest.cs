@@ -122,7 +122,7 @@ namespace ModernPlayerManagementAPITests
 
             // Then
             Assert.Equal(this.teams[0].ManagerId, manager.Id);
-            Assert.Equal(1, teams.Count);
+            Assert.Single(teams);
         }
 
         [Fact]
@@ -274,7 +274,7 @@ namespace ModernPlayerManagementAPITests
             this.teamService.DeleteTeam(team.Id);
 
             // Then
-            Assert.Equal(0, this.teams.Count);
+            Assert.Empty(this.teams);
         }
 
         [Fact]
@@ -302,7 +302,7 @@ namespace ModernPlayerManagementAPITests
             this.teamService.AddEvent(team.Id, evtDTO);
 
             // Then
-            Assert.Equal(1, team.Events.Count());
+            Assert.Single(team.Events);
             Assert.Equal("Test Event", team.Events.First().Name);
         }
 
@@ -328,8 +328,8 @@ namespace ModernPlayerManagementAPITests
             bool result2 = this.teamService.IsUserTeamManager(team.Id, user2.Id);
 
             // Then
-            Assert.Equal(true, result1);
-            Assert.Equal(false, result2);
+            Assert.True(result1);
+            Assert.False(result2);
         }
     }
 }

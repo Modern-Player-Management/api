@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Services;
+using ModernPlayerManagementAPI.Services.Interfaces;
 
 namespace ModernPlayerManagementAPI.Controllers
 {
@@ -13,46 +14,38 @@ namespace ModernPlayerManagementAPI.Controllers
     [ProducesResponseType(401)]
     public class EventsController : ControllerBase
     {
-        private readonly IEventService _eventService;
-
-        public EventsController(IEventService eventService)
+        private readonly IEventService eventService;
+        private readonly IDiscrepancyService discrepancyService;
+        
+        public EventsController(IEventService eventService, IDiscrepancyService discrepancyService)
         {
-            _eventService = eventService;
+            this.eventService = eventService;
+            this.discrepancyService = discrepancyService;
         }
 
         [HttpPost("{eventId:Guid}/confirm")]
         public IActionResult ConfirmEvent(Guid eventId)
         {
-            if (this._eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
-            {
-                return Unauthorized();
-            }
-
-            this._eventService.ConfirmEvent(eventId, this.GetCurrentUserId());
+            this.eventService.ConfirmEvent(eventId, this.GetCurrentUserId());
             return Ok();
         }
 
         [HttpPost("{eventId:Guid}/discrepancies")]
         public IActionResult AddDiscrepancy(Guid eventId, [FromBody] UpsertDiscrepancyDTO dto)
         {
-            if (this._eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
-            {
-                return Unauthorized();
-            }
-
-            this._eventService.AddDiscrepancy(eventId, dto, this.GetCurrentUserId());
+            this.eventService.AddDiscrepancy(eventId, dto, this.GetCurrentUserId());
             return Ok();
         }
 
         [HttpPut("{eventId:Guid}")]
         public IActionResult UpdateEvent([FromBody] UpsertEventDTO dto, Guid eventId)
         {
-            if (this._eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
+            if (this.eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
             {
                 return Unauthorized();
             }
 
-            this._eventService.UpdateEvent(dto, eventId);
+            this.eventService.UpdateEvent(dto, eventId);
 
             return Ok();
         }
@@ -60,12 +53,12 @@ namespace ModernPlayerManagementAPI.Controllers
         [HttpDelete("{eventId:Guid}")]
         public IActionResult DeleteEvent(Guid eventId)
         {
-            if (this._eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
+            if (this.eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
             {
                 return Unauthorized();
             }
 
-            this._eventService.DeleteEvent(eventId);
+            this.eventService.DeleteEvent(eventId);
 
             return Ok();
         }

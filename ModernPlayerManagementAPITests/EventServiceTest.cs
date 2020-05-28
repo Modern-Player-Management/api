@@ -66,7 +66,7 @@ namespace ModernPlayerManagementAPITests
             this._eventService.ConfirmEvent(evt.Id,user.Id);
             
             // Then
-            Assert.Equal(true, this.events.First().Participations.First().Confirmed);
+            Assert.True(this.events.First().Participations.First().Confirmed);
         }
 
         [Fact]
@@ -97,7 +97,6 @@ namespace ModernPlayerManagementAPITests
                 Reason = "Test reason",
                 Type = Discrepancy.DiscrepancyType.Delay,
                 DelayLength = 15,
-                UserId = user.Id
             };
             
             // When

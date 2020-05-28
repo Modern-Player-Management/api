@@ -16,7 +16,7 @@ namespace ModernPlayerManagementAPITests
         private List<Discrepancy> discrepancies;
         private IDiscrepancyService service;
 
-        public void setup()
+        void setup()
         {
             this.discrepancies = new List<Discrepancy>();
 

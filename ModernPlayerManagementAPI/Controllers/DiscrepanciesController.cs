@@ -20,7 +20,7 @@ namespace ModernPlayerManagementAPI.Controllers
             this.discrepancyService = discrepancyService;
         }
 
-        [HttpPut("{discrepancyId:Guid")]
+        [HttpPut("{discrepancyId:Guid}")]
         public IActionResult UpdateDiscrepancy(Guid discrepancyId, [FromBody] UpsertDiscrepancyDTO dto)
         {
             if (!this.discrepancyService.IsUserDiscrepancyIssuer(this.GetCurrentUserId(), discrepancyId))
@@ -32,7 +32,7 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("{discrepancyId:Guid")]
+        [HttpDelete("{discrepancyId:Guid}")]
         public IActionResult DeleteDiscrepancy(Guid discrepancyId)
         {
             if (!this.discrepancyService.IsUserDiscrepancyIssuer(this.GetCurrentUserId(), discrepancyId))

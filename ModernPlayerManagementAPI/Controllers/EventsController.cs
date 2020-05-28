@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Services;
@@ -23,21 +25,38 @@ namespace ModernPlayerManagementAPI.Controllers
             this.discrepancyService = discrepancyService;
         }
 
+        /// <summary>
+        /// Confirms the presence of the current user to an event
+        /// </summary>
+        /// <param name="eventId">Id of the event</param>
         [HttpPost("{eventId:Guid}/confirm")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult ConfirmEvent(Guid eventId)
         {
             this.eventService.ConfirmEvent(eventId, this.GetCurrentUserId());
             return Ok();
         }
 
+        /// <summary>
+        /// Adds a discrepancy for the user to an event
+        /// </summary>
+        /// <param name="eventId">Id of the event</param>
+        /// <param name="dto">DTO containing the infos of the discrepancy</param>
         [HttpPost("{eventId:Guid}/discrepancies")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult AddDiscrepancy(Guid eventId, [FromBody] UpsertDiscrepancyDTO dto)
         {
             this.eventService.AddDiscrepancy(eventId, dto, this.GetCurrentUserId());
             return Ok();
         }
 
+        /// <summary>
+        /// Updates an event
+        /// </summary>
+        /// <param name="dto">New infos about the event</param>
+        /// <param name="eventId">Id of the event</param>
         [HttpPut("{eventId:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult UpdateEvent([FromBody] UpsertEventDTO dto, Guid eventId)
         {
             if (this.eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
@@ -50,7 +69,12 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Delete an event
+        /// </summary>
+        /// <param name="eventId">Id of the event</param>
         [HttpDelete("{eventId:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult DeleteEvent(Guid eventId)
         {
             if (this.eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))

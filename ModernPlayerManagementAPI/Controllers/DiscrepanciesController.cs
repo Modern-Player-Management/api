@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Services.Interfaces;
@@ -20,7 +21,13 @@ namespace ModernPlayerManagementAPI.Controllers
             this.discrepancyService = discrepancyService;
         }
 
+        /// <summary>
+        /// Updates a discrepancy from its id
+        /// </summary>
+        /// <param name="discrepancyId">Id of the discrepancy</param>
+        /// <param name="dto">DTO containing the new informations</param>
         [HttpPut("{discrepancyId:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult UpdateDiscrepancy(Guid discrepancyId, [FromBody] UpsertDiscrepancyDTO dto)
         {
             if (!this.discrepancyService.IsUserDiscrepancyIssuer(this.GetCurrentUserId(), discrepancyId))
@@ -32,7 +39,12 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Deletes a discrepancy
+        /// </summary>
+        /// <param name="discrepancyId">Id of the discrepancy</param>
         [HttpDelete("{discrepancyId:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult DeleteDiscrepancy(Guid discrepancyId)
         {
             if (!this.discrepancyService.IsUserDiscrepancyIssuer(this.GetCurrentUserId(), discrepancyId))

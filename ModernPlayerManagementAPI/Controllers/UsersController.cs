@@ -87,8 +87,8 @@ namespace ModernPlayerManagementAPI.Controllers
         /// Info about the current user's profile
         /// </summary>
         /// <returns>A DTO representing the user's profile</returns>
-        [HttpGet("/profile")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet("profile")]
+        [ProducesResponseType(typeof(UserProfileDTO),StatusCodes.Status200OK)]
         public IActionResult UserProfile()
         {
             return Ok(this._userService.GetUserProfile(this.GetCurrentUserId()));

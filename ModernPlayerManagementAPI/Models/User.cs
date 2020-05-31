@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ModernPlayerManagementAPI.Models
@@ -10,6 +11,9 @@ namespace ModernPlayerManagementAPI.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public ICollection<Membership> Memberships { get; set; }
-        [NotMapped] public string Token { get; set; }
+        [NotMapped] 
+        public string Token { get; set; }
+        
+        public Guid CalendarSecret { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
 
-namespace ModernPlayerManagementAPI.Services
+namespace ModernPlayerManagementAPI.Services.Interfaces
 {
     public interface IUserService
     {
@@ -13,5 +13,7 @@ namespace ModernPlayerManagementAPI.Services
         void Update(UpdateUserDTO dto, Guid userId);
         ICollection<UserDTO> SearchUser(string search);
         UserDTO GetFromUsername(string username);
+        UserProfileDTO GetUserProfile(Guid userId);
     }
+    
 }

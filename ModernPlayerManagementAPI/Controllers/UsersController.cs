@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Services;
+using ModernPlayerManagementAPI.Services.Interfaces;
 
 namespace ModernPlayerManagementAPI.Controllers
 {
@@ -43,7 +45,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <returns>Infos about the users</returns>
         [HttpGet("{username}")]
         [ProducesResponseType(typeof(UserDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(UserProfileDTO),StatusCodes.Status404NotFound)]
         public IActionResult GetUser(string username)
         {
             UserDTO dto = null;
@@ -79,6 +81,22 @@ namespace ModernPlayerManagementAPI.Controllers
             }
 
             return Ok();
+        }
+
+        /// <summary>
+        /// Info about the current user's profile
+        /// </summary>
+        /// <returns>A DTO representing the user's profile</returns>
+        [HttpGet("/profile")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult UserProfile()
+        {
+            return Ok(this._userService.GetUserProfile(this.GetCurrentUserId()));
+        }
+        
+        private Guid GetCurrentUserId()
+        {
+            return Guid.Parse(User.FindFirst(ClaimTypes.Name)?.Value);
         }
     }
 }

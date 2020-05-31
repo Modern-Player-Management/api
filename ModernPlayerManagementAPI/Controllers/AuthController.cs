@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Services;
+using ModernPlayerManagementAPI.Services.Interfaces;
 
 namespace ModernPlayerManagementAPI.Controllers
 {

@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Repositories;
+using ModernPlayerManagementAPI.Services.Interfaces;
 
 namespace ModernPlayerManagementAPI.Services
 {
@@ -84,7 +85,8 @@ namespace ModernPlayerManagementAPI.Services
             {
                 Username = username,
                 Password = BCrypt.Net.BCrypt.HashPassword(password),
-                Email = email
+                Email = email,
+                CalendarSecret = Guid.NewGuid()
             };
 
             this._userRepository.Insert(user);
@@ -140,6 +142,13 @@ namespace ModernPlayerManagementAPI.Services
         public UserDTO GetFromUsername(string username)
         {
             return this._mapper.Map<UserDTO>(this._userRepository.GetUserByUsername(username));
+        }
+
+        public UserProfileDTO GetUserProfile(Guid userId)
+        {
+            var user = this._userRepository.GetById(userId);
+
+            return this._mapper.Map<UserProfileDTO>(user);
         }
 
         private string ValidatePassword(string password)

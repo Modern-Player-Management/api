@@ -11,7 +11,7 @@ namespace ModernPlayerManagementAPITests
     {
         private ApplicationDbContext context;
 
-        void setup()
+        public EventRepositoryTest()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "ApplicationDatabase")
@@ -24,7 +24,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         void GetById()
         {
-            this.setup();
             // Given
             var evt = new Event()
             {

@@ -13,7 +13,7 @@ namespace ModernPlayerManagementAPITests
     {
         private ApplicationDbContext context;
 
-        void setup()
+        public TeamRepositoryTest()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "ApplicationDatabase")
@@ -26,7 +26,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void Get_Team_By_Id()
         {
-            this.setup();
 
             // Given
             var manager = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
@@ -50,7 +49,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void Get_Teams_Returns_Teams_In_Which_User_Is_Manager_Or_Member()
         {
-            this.setup();
 
             // Given
             var manager = new User {Username = "manager", Email = "manager@manager.fr", Id = Guid.NewGuid()};
@@ -83,7 +81,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void Get_Teams_Test()
         {
-            this.setup();
 
             // Given
             var manager = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};

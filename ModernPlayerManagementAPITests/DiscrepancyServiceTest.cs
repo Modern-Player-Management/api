@@ -16,7 +16,7 @@ namespace ModernPlayerManagementAPITests
         private List<Discrepancy> discrepancies;
         private IDiscrepancyService service;
 
-        void setup()
+        public DiscrepancyServiceTest()
         {
             this.discrepancies = new List<Discrepancy>();
 
@@ -41,8 +41,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void IsUserDiscrepancyIssuer_Is_Issuer_Returns_True_Test()
         {
-            this.setup();
-
             // Given
             var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var discrepancy = new Discrepancy()
@@ -63,8 +61,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void IsUserDiscrepancyIssuer_Is_Not_Issuer_Returns_False_Test()
         {
-            this.setup();
-
             // Given
             var user1 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var user2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
@@ -86,7 +82,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void DeleteDiscrepancy_Test()
         {
-            this.setup();
             // Given
             var user2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var discrepancy = new Discrepancy()
@@ -106,7 +101,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void UpdateDiscrepancy_Test()
         {
-            this.setup();
             // Given
             var user2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var discrepancy = new Discrepancy()

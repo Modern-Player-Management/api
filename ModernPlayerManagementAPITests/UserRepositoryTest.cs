@@ -11,7 +11,7 @@ namespace ModernPlayerManagementAPITests
     {
         private ApplicationDbContext context;
 
-        void setup()
+        public UserRepositoryTest()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "ApplicationDatabase")
@@ -24,7 +24,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         void GetUserByUsernameTest()
         {
-            this.setup();
             // Given
             var manager = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr"};
             context.Users.Add(manager);
@@ -41,7 +40,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         void FindUsersByUsernameContainsTest()
         {
-            this.setup();
             // Given
             var manager1 = new User {Username = "Arsène", Email = "arsene@lapostolet.fr"};
             var manager2 = new User {Username = "Jean Michel", Email = "arsene@lapostolet.fr"};

@@ -19,7 +19,7 @@ namespace ModernPlayerManagementAPITests
         private TeamService teamService;
         private List<Event> events;
 
-        private void setup()
+        public TeamServiceTest()
         {
             teams = new List<Team>();
             users = new List<User>();
@@ -111,7 +111,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void Create_Team_Test()
         {
-            this.setup();
             // Given
             var manager = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var team = new UpsertTeamDTO()
@@ -128,7 +127,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void Get_Team_By_Id()
         {
-            this.setup();
             // Given
             var teamId = Guid.NewGuid();
             var team = new Team
@@ -145,7 +143,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void GetTeams_Test()
         {
-            this.setup();
             // Given
             var manager1 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var manager2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
@@ -196,7 +193,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void Add_Player_To_Team_Test()
         {
-            this.setup();
             // Given
             var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
 
@@ -220,7 +216,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void Remove_Player_To_Team_Test()
         {
-            this.setup();
             // Given
             var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
 
@@ -241,7 +236,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void Update_Team_Test()
         {
-            this.setup();
             // Given
             var team = new Team
             {
@@ -261,7 +255,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void Delete_Team_Test()
         {
-            this.setup();
             // Given
             var team = new Team
             {
@@ -280,7 +273,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         public void Add_Event_Test()
         {
-            this.setup();
             // Given
             var team = new Team
             {
@@ -309,7 +301,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         void IsUserTeamManager_Test()
         {
-            this.setup();
             // Given
             var user1 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var user2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};

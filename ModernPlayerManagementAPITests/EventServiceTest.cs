@@ -16,7 +16,7 @@ namespace ModernPlayerManagementAPITests
         private List<Event> events;
         private EventService _eventService;
 
-        void setup()
+        public EventServiceTest()
         {
             events = new List<Event>();
 
@@ -63,8 +63,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         void ConfirmEvent_Test()
         {
-            this.setup();
-
             // Given
             var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var evt = new Event()
@@ -94,8 +92,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         void AddDiscrepancy_Test()
         {
-            this.setup();
-
             // Given
             var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.Empty};
             var evt = new Event()
@@ -132,8 +128,6 @@ namespace ModernPlayerManagementAPITests
         [Fact]
         void UpdateEvent_Test()
         {
-            this.setup();
-
             // Given
             var evt = new Event()
             {

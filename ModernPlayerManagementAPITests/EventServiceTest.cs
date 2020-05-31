@@ -5,6 +5,7 @@ using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Repositories;
 using ModernPlayerManagementAPI.Services;
+using ModernPlayerManagementAPI.Services.Interfaces;
 using Moq;
 using Xunit;
 
@@ -21,6 +22,8 @@ namespace ModernPlayerManagementAPITests
 
             var eventRepoMock = new Mock<IEventRepository>();
             var teamServiceMock = new Mock<ITeamService>();
+            var mailServiceMock = new Mock<IMailService>();
+            var teamRepository = new Mock<ITeamRepository>();
 
             eventRepoMock.Setup(mock => mock.GetById(It.IsAny<Guid>()))
                 .Returns<Guid>(eventId => this.events.Find(evt => evt.Id == eventId));
@@ -35,14 +38,33 @@ namespace ModernPlayerManagementAPITests
             eventRepoMock.Setup(mock => mock.Delete(It.IsAny<Guid>()))
                 .Callback<Guid>(eventId => this.events.Remove(this.events.Find(e => e.Id == eventId)));
 
-            this._eventService = new EventService(eventRepoMock.Object, teamServiceMock.Object);
+            teamRepository.Setup(mock => mock.GetById(It.IsAny<Guid>()))
+                .Returns(() =>
+                {
+                    var user1 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+                    var user2 = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.Empty};
+                    var team = new Team
+                    {
+                        Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team",
+                        Players = new List<Membership>() { }, Events = new List<Event>(),
+                        ManagerId = user1.Id,
+                        Manager = user1
+                    };
+
+                    team.Players.Add(new Membership() {TeamId = team.Id, UserId = user2.Id, User = user2});
+
+                    return team;
+                });
+
+            this._eventService = new EventService(eventRepoMock.Object, teamServiceMock.Object, mailServiceMock.Object,
+                teamRepository.Object);
         }
 
         [Fact]
         void ConfirmEvent_Test()
         {
             this.setup();
-            
+
             // Given
             var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var evt = new Event()
@@ -59,12 +81,12 @@ namespace ModernPlayerManagementAPITests
                 Created = DateTime.Now,
                 Type = Event.EventType.Coaching
             };
-            
+
             events.Add(evt);
-            
+
             // When
-            this._eventService.ConfirmEvent(evt.Id,user.Id);
-            
+            this._eventService.ConfirmEvent(evt.Id, user.Id);
+
             // Then
             Assert.True(this.events.First().Participations.First().Confirmed);
         }
@@ -73,9 +95,9 @@ namespace ModernPlayerManagementAPITests
         void AddDiscrepancy_Test()
         {
             this.setup();
-            
+
             // Given
-            var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+            var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.Empty};
             var evt = new Event()
             {
                 Id = Guid.NewGuid(),
@@ -89,30 +111,29 @@ namespace ModernPlayerManagementAPITests
                 Created = DateTime.Now,
                 Type = Event.EventType.Coaching
             };
-            
+
             events.Add(evt);
-            
+
             var dto = new UpsertDiscrepancyDTO()
             {
                 Reason = "Test reason",
                 Type = Discrepancy.DiscrepancyType.Delay,
                 DelayLength = 15,
             };
-            
+
             // When
-            this._eventService.AddDiscrepancy(evt.Id,dto, user.Id);
+            this._eventService.AddDiscrepancy(evt.Id, dto, user.Id);
 
             // Then
-            Assert.Equal(1,evt.Discrepancies.Count);
-            Assert.Equal( "Test reason",evt.Discrepancies.First().Reason);
-            
+            Assert.Equal(1, evt.Discrepancies.Count);
+            Assert.Equal("Test reason", evt.Discrepancies.First().Reason);
         }
 
         [Fact]
         void UpdateEvent_Test()
         {
             this.setup();
-            
+
             // Given
             var evt = new Event()
             {
@@ -128,7 +149,7 @@ namespace ModernPlayerManagementAPITests
                 Type = Event.EventType.Coaching
             };
             this.events.Add(evt);
-            
+
             var dto = new UpsertEventDTO()
             {
                 Name = "Test Event",
@@ -137,7 +158,7 @@ namespace ModernPlayerManagementAPITests
                 End = DateTime.Now,
                 Type = Event.EventType.Coaching
             };
-            
+
             // When
             this._eventService.UpdateEvent(dto, evt.Id);
 

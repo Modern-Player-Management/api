@@ -14,7 +14,7 @@ namespace ModernPlayerManagementAPI.Repositories
 
         public new Event GetById(Guid id)
         {
-            return (from evt in this._context.Events.Include(e => e.Participations) select evt).First();
+            return (from evt in this._context.Events.Include(e => e.Participations) select evt).First(e => e.Id == id);
         }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
 using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Repositories;
@@ -14,20 +17,45 @@ namespace ModernPlayerManagementAPI.Services
         private readonly ITeamService _teamService;
         private readonly IMailService mailService;
         private readonly ITeamRepository teamRepository;
+        private readonly IUserRepository _userRepository;
 
         public EventService(IEventRepository eventRepository, ITeamService teamService, IMailService mailService,
-            ITeamRepository teamRepository)
+            ITeamRepository teamRepository, IUserRepository userRepository)
         {
             _eventRepository = eventRepository;
             _teamService = teamService;
             this.mailService = mailService;
             this.teamRepository = teamRepository;
+            this._userRepository = userRepository;
         }
 
         public bool IsUserTeamManager(Guid eventId, Guid userId)
         {
             var evt = this._eventRepository.GetById(eventId);
             return this._teamService.IsUserTeamManager(evt.TeamId, userId);
+        }
+            
+        public Calendar GetUserCalendar(Guid icalSecret)
+        {
+            var user = this._userRepository.GetByICalSecret(icalSecret);
+            var events = this._eventRepository.GetUserFutureEvents(user.Id);
+            
+             var calendarEvents = events.Select(evt => new CalendarEvent()
+             {
+                 Start = new CalDateTime(evt.Start),
+                 End = new CalDateTime(evt.End),
+                 Summary = evt.Name,
+                 Attendees = evt.Participations.Select(p => new Attendee(){CommonName = p.User.Username, Value = new Uri($"mailto:{p.User.Email}")}).ToList(),
+                 Description = evt.Description
+             });
+            
+             var calendar = new Calendar();
+             foreach (var calendarEvent in calendarEvents)
+             {
+                 calendar.Events.Add(calendarEvent);
+             }
+
+             return calendar;
         }
 
         public void ConfirmEvent(Guid eventId, Guid userId)

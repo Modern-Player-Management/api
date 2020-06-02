@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ModernPlayerManagementAPI.Models;
 
 namespace ModernPlayerManagementAPI.Repositories
@@ -7,5 +8,6 @@ namespace ModernPlayerManagementAPI.Repositories
     {
         User GetUserByUsername(string username);
         ICollection<User> findUsersByUsernameContains(string search);
+        User GetByICalSecret(Guid icalSecret);
     }
 }

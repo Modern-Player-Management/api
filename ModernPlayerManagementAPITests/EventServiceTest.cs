@@ -24,6 +24,7 @@ namespace ModernPlayerManagementAPITests
             var teamServiceMock = new Mock<ITeamService>();
             var mailServiceMock = new Mock<IMailService>();
             var teamRepository = new Mock<ITeamRepository>();
+            var userRepository = new Mock<IUserRepository>();
 
             eventRepoMock.Setup(mock => mock.GetById(It.IsAny<Guid>()))
                 .Returns<Guid>(eventId => this.events.Find(evt => evt.Id == eventId));
@@ -56,8 +57,10 @@ namespace ModernPlayerManagementAPITests
                     return team;
                 });
 
+            userRepository = new Mock<IUserRepository>();
+            
             this._eventService = new EventService(eventRepoMock.Object, teamServiceMock.Object, mailServiceMock.Object,
-                teamRepository.Object);
+                teamRepository.Object, userRepository.Object);
         }
 
         [Fact]

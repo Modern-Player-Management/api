@@ -71,6 +71,11 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult UpdateUser([FromBody] UpdateUserDTO dto, Guid userId)
         {
+            if (userId != this.GetCurrentUserId())
+            {
+                return Unauthorized();
+            }
+            
             try
             {
                 this._userService.Update(dto, userId);

@@ -14,8 +14,8 @@ deploy:
   secret_access_key: $SECRETACCESSKEY
   region: eu-west-3
   app: apimodernplayermanager
-  env: apimodernplayermanager
-  bucket_name: apimodernplayermanager
+  env: apimodernplayermanager-env
+  bucket_name: elasticbeanstalk-eu-west-3-689693283697
   on:
     branch: master
 

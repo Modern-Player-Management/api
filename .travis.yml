@@ -17,3 +17,15 @@ after_failure:
   - wget https://raw.githubusercontent.com/LacazeThomas/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh $WEBHOOK_URL
+
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $ACCESSKEYID
+  secret_access_key:
+    secure: "$SECRETACCESSKEY"
+  region: eu-west-3
+  app: "apimodernplayermanager"
+  env: "apimodernplayermanager"
+  bucket_name: "apimodernplayermanager"
+  on:
+    branch: master

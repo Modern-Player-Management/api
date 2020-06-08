@@ -8,16 +8,6 @@ script:
 - dotnet build
 - dotnet test ModernPlayerManagementAPITests/ModernPlayerManagementAPITests.csproj
 
-after_success:
-  - wget https://raw.githubusercontent.com/LacazeThomas/travis-ci-discord-webhook/master/send.sh
-  - chmod +x send.sh
-  - ./send.sh $WEBHOOK_URL
-
-after_failure:
-  - wget https://raw.githubusercontent.com/LacazeThomas/travis-ci-discord-webhook/master/send.sh
-  - chmod +x send.sh
-  - ./send.sh $WEBHOOK_URL
-
 deploy:
   provider: elasticbeanstalk
   access_key_id: $ACCESSKEYID
@@ -29,3 +19,15 @@ deploy:
   bucket_name: "apimodernplayermanager"
   on:
     branch: master
+  skip_cleanup: true
+
+after_success:
+  - wget https://raw.githubusercontent.com/LacazeThomas/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh $WEBHOOK_URL
+
+after_failure:
+  - wget https://raw.githubusercontent.com/LacazeThomas/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh $WEBHOOK_URL
+

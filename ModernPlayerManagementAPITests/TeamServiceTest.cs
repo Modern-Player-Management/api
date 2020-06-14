@@ -16,9 +16,9 @@ namespace ModernPlayerManagementAPITests
 {
     public class TeamServiceTest
     {
-        private List<Team> teams;
-        private List<User> users;
-        private TeamService teamService;
+        private readonly List<Team> teams;
+        private readonly List<User> users;
+        private readonly TeamService teamService;
         private List<Event> events;
 
         public TeamServiceTest()

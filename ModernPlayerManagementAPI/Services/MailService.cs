@@ -8,15 +8,13 @@ namespace ModernPlayerManagementAPI.Services
 {
     public class MailService : IMailService
     {
-        private readonly IConfiguration configuration;
         private readonly ISmtpClient smtpClient;
 
-        public MailService(IConfiguration configuration)
+        public MailService(ISmtpClient smtpClient)
         {
-            this.configuration = configuration;
-            smtpClient = new SmtpClient();
-            smtpClient.Connect("smtp.gmail.com", 587, false);
-            smtpClient.Authenticate("modern.player.management@gmail.com", "mpm@2020");
+            this.smtpClient = smtpClient;
+            this.smtpClient.Connect("smtp.gmail.com", 587, false);
+            this.smtpClient.Authenticate("modern.player.management@gmail.com", "mpm@2020");
         }
 
         public void SendMail(string username, string email, string subject, string body)

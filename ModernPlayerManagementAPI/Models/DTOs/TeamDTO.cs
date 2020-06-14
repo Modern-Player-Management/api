@@ -14,5 +14,6 @@ namespace ModernPlayerManagementAPI.Models.DTOs
         public ICollection<UserDTO> Players { get; set; }
         public DateTime Created { get; set; }
         public ICollection<EventDTO> Events { get; set; }
+        public ICollection<GameDTO> Games { get; set; }
     }
 }

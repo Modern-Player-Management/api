@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Services;
+using RocketLeagueReplayParser;
 
 namespace ModernPlayerManagementAPI.Controllers
 {
@@ -143,6 +145,20 @@ namespace ModernPlayerManagementAPI.Controllers
             {
                 return Unauthorized();
             }
+        }
+
+        /// <summary>
+        /// Add a replay file to the team
+        /// </summary>
+        /// <param name="file">The .replay file from Rocket League</param>
+        /// <param name="teamId">The Id of the team on which to add the game</param>
+        /// <returns>A DTO tat represents the Game</returns>
+        [HttpPost("{teamId:Guid}/games")]
+        public IActionResult UploadReplay(IFormFile file, Guid teamId)
+        {
+            var replay = Replay.Deserialize(file.OpenReadStream());
+
+            return Ok(this._teamService.AddGame(replay,teamId));
         }
 
         private Guid GetCurrentUserId()

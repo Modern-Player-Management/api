@@ -34,7 +34,7 @@ namespace ModernPlayerManagementAPI.Repositories
                 select team).ToList();
         }
 
-        private IIncludableQueryable<Team, User> GetTeamsEager()
+        private IIncludableQueryable<Team, ICollection<PlayerStats>> GetTeamsEager()
         {
             return this._context.Teams
                 .Include(team => team.Manager)
@@ -45,7 +45,9 @@ namespace ModernPlayerManagementAPI.Repositories
                 .ThenInclude(evt => evt.User)
                 .Include(team => team.Events)
                 .ThenInclude(evt => evt.Participations)
-                .ThenInclude(part => part.User);
+                .ThenInclude(part => part.User)
+                .Include(team => team.Games)
+                .ThenInclude(game => game.PlayersStats);
         }
     }
 }

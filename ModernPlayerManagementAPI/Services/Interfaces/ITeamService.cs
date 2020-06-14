@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ModernPlayerManagementAPI.Models.DTOs;
+using RocketLeagueReplayParser;
 
 namespace ModernPlayerManagementAPI.Services
 {
@@ -15,5 +16,6 @@ namespace ModernPlayerManagementAPI.Services
         void DeleteTeam(Guid Id);
         bool IsUserTeamManager(Guid teamId, Guid userId);
         EventDTO AddEvent(Guid teamId, UpsertEventDTO dto);
+        GameDTO AddGame(Replay replay, Guid teamId);
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using AutoMapper;
 using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Repositories;
+using RocketLeagueReplayParser;
 
 namespace ModernPlayerManagementAPI.Services
 {
@@ -70,6 +72,48 @@ namespace ModernPlayerManagementAPI.Services
             return responseDTO;
         }
 
+        public GameDTO AddGame(Replay replay, Guid teamId)
+        {
+            var playerStats = (List<PropertyDictionary>) replay.Properties.GetValueOrDefault("PlayerStats").Value;
+            var stats = playerStats
+                .Where(v => Int32.Parse(v.GetValueOrDefault("Team").Value.ToString()) == 0)
+                .Select(v => new PlayerStats()
+                {
+                    Player = v.GetValueOrDefault("Name").Value.ToString(),
+                    Assists = int.Parse(v.GetValueOrDefault("Assists").Value.ToString()),
+                    Goals = int.Parse(v.GetValueOrDefault("Goals").Value.ToString()),
+                    Saves = int.Parse(v.GetValueOrDefault("Saves").Value.ToString()),
+                    Shots = int.Parse(v.GetValueOrDefault("Shots").Value.ToString()),
+                    Score = int.Parse(v.GetValueOrDefault("Score").Value.ToString()),
+                    Created = DateTime.Now
+                }).ToList();
+
+            CultureInfo provider = CultureInfo.InvariantCulture;
+            var date = DateTime.ParseExact(replay.Properties.GetValueOrDefault("Date").Value.ToString(),
+                "yyyy-MM-dd HH-mm-ss", provider, DateTimeStyles.None);
+
+            var team0Score = int.Parse(replay.Properties.GetValueOrDefault("Team0Score").Value.ToString());
+            var team1Score = int.Parse(replay.Properties.GetValueOrDefault("Team1Score").Value.ToString());
+            var name = replay.Properties.GetValueOrDefault("ReplayName").Value.ToString();
+            var game = new Game()
+            {
+                Created = DateTime.Now,
+                Date = date,
+                Name = name,
+                Win = (team0Score == team1Score)
+                    ? Game.GameResult.Draw
+                    : (team0Score > team1Score ? Game.GameResult.Win : Game.GameResult.Loss),
+                PlayersStats = stats
+            };
+
+            var team = this.teamRepository.GetById(teamId);
+            team.Games.Add(game);
+
+            this.teamRepository.Update(team);
+            team = this.teamRepository.GetById(teamId);
+            return this.mapper.Map<GameDTO>(team.Games.First(g => g.Name == name));
+        }
+
 
         public TeamDTO createTeam(UpsertTeamDTO teamDto, Guid currentUserId)
         {
@@ -94,7 +138,8 @@ namespace ModernPlayerManagementAPI.Services
                 Created = team.Created,
                 Description = team.Description,
                 Image = team.Image,
-                Events = new List<EventDTO>()
+                Events = new List<EventDTO>(),
+                Games = new List<GameDTO>()
             };
 
             return teamDTO;
@@ -144,7 +189,8 @@ namespace ModernPlayerManagementAPI.Services
                             UserId = e.UserId,
                             Username = e.User.Username
                         }).ToList()
-                    }).ToList()
+                    }).ToList(),
+                    Games = team.Games.Select(game => this.mapper.Map<GameDTO>(game)).ToList()
                 };
                 return dto;
             }).ToList();

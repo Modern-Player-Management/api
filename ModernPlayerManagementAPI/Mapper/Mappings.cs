@@ -12,6 +12,8 @@ namespace ModernPlayerManagementAPI.Mapper
             CreateMap<Team, TeamDTO>().ReverseMap();
             CreateMap<Event, EventDTO>().ReverseMap();
             CreateMap<User, UserProfileDTO>().ReverseMap();
+            CreateMap<Game, GameDTO>().ReverseMap();
+            CreateMap<PlayerStats, PlayerStatsDTO>().ReverseMap();
         }
     }
 }

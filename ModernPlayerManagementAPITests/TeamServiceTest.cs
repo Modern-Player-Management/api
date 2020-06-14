@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AutoMapper;
 using ModernPlayerManagementAPI.Mapper;
@@ -8,6 +9,7 @@ using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Repositories;
 using ModernPlayerManagementAPI.Services;
 using Moq;
+using RocketLeagueReplayParser;
 using Xunit;
 
 namespace ModernPlayerManagementAPITests
@@ -47,6 +49,8 @@ namespace ModernPlayerManagementAPITests
                         membership.User = this.users.First(user => user.Id == membership.UserId);
                         membership.Team = this.teams.First(team => team.Id == membership.TeamId);
                     }
+                    
+                    team.Games ??= new List<Game>();
 
                     return team;
                 });
@@ -73,6 +77,8 @@ namespace ModernPlayerManagementAPITests
                             {
                                 team.Events.Add(evt);
                             }
+
+                            team.Games ??= new List<Game>();
 
                             return team;
                         }).ToList());
@@ -321,6 +327,30 @@ namespace ModernPlayerManagementAPITests
             // Then
             Assert.True(result1);
             Assert.False(result2);
+        }
+
+        [Fact]
+        void AddGameTest()
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+            // Given
+            var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+
+            var team = new Team
+                {Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team", Players = new List<Membership>()};
+            team.Players.Add(new Membership() {UserId = user.Id, TeamId = team.Id});
+
+            this.users.Add(user);
+            this.teams.Add(team);
+            var replay = Replay.Deserialize("../../../42EC23C0457C5367AA062C825B3011ED.replay");
+
+            // When
+            this.teamService.AddGame(replay, team.Id);
+
+            // Then
+            team = this.teams.First(t => t.Id == team.Id);
+            Assert.Equal(1,team.Games.Count);
+            Assert.Equal(3,team.Games.First().PlayersStats.Count);
         }
     }
 }

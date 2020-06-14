@@ -18,12 +18,12 @@ namespace ModernPlayerManagementAPI.Repositories
             _entities = context.Set<T>();
         }
 
-        public ICollection<T> GetAll()
+        public virtual ICollection<T> GetAll()
         {
             return _entities.OrderBy(entity => entity.Created).ToList();
         }
 
-        public T GetById(Guid id)
+        public virtual T GetById(Guid id)
         {
             return (
                 from entity in _entities
@@ -32,7 +32,7 @@ namespace ModernPlayerManagementAPI.Repositories
             ).First();
         }
 
-        public void Insert(T entity)
+        public virtual void Insert(T entity)
         {
             if (entity == null)
             {
@@ -44,7 +44,7 @@ namespace ModernPlayerManagementAPI.Repositories
             _context.SaveChanges();
         }
 
-        public void Update(T entity)
+        public virtual void Update(T entity)
         {
             if (entity == null)
             {
@@ -55,7 +55,7 @@ namespace ModernPlayerManagementAPI.Repositories
             this._context.SaveChanges();
         }
 
-        public void Delete(Guid id)
+        public virtual void Delete(Guid id)
         {
             if (id == null)
             {

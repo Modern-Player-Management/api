@@ -14,12 +14,12 @@ namespace ModernPlayerManagementAPI.Repositories
         {
         }
 
-        public new ICollection<Team> GetAll()
+        public override ICollection<Team> GetAll()
         {
             return GetTeamsEager().ToList();
         }
 
-        public new Team GetById(Guid id)
+        public override Team GetById(Guid id)
         {
             return (from team in this.GetTeamsEager()
                 where team.Id == id

@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Security.Claims;
+using System.Text;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -90,6 +96,20 @@ namespace ModernPlayerManagementAPI.Controllers
         private Guid GetCurrentUserId()
         {
             return Guid.Parse(User.FindFirst(ClaimTypes.Name)?.Value);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ical/{icalSecret:Guid}")]
+        public IActionResult GetICalFeed(Guid icalSecret)
+        {
+
+            var calendar = this.eventService.GetUserCalendar(icalSecret);
+            var serializer = new CalendarSerializer();
+            var serializedCalendar = serializer.SerializeToString(calendar);
+            var contentType = "text/calendar";
+            var bytes = Encoding.UTF8.GetBytes(serializedCalendar);
+
+            return File(bytes, contentType, "calendar.ics");
         }
     }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using AutoMapper;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -52,6 +53,7 @@ namespace ModernPlayerManagementAPI
             services.AddScoped<IMailService, MailService>();
             services.AddScoped<IDiscrepancyService, DiscrepancyService>();
             services.AddAutoMapper(typeof(Mappings));
+            services.AddScoped<ISmtpClient, SmtpClient>();
 
             // ==================================== Swagger config =====================================================
 

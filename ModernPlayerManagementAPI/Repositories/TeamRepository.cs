@@ -43,7 +43,7 @@ namespace ModernPlayerManagementAPI.Repositories
 
         private IIncludableQueryable<Team, User> GetTeamsLazy()
         {
-            return this._context.Teams.AsNoTracking()
+            return this._context.Teams
                 .Include(team => team.Manager)
                 .Include(team => team.Players)
                 .ThenInclude(membership => membership.User);
@@ -51,7 +51,7 @@ namespace ModernPlayerManagementAPI.Repositories
 
         private IIncludableQueryable<Team, ICollection<PlayerStats>> GetTeamsEager()
         {
-            return this._context.Teams.AsNoTracking()
+            return this._context.Teams
                 .Include(team => team.Manager)
                 .Include(team => team.Players)
                 .ThenInclude(membership => membership.User)

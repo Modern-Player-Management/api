@@ -36,7 +36,7 @@ namespace ModernPlayerManagementAPI.Repositories
 
         private IIncludableQueryable<Team, ICollection<PlayerStats>> GetTeamsEager()
         {
-            return this._context.Teams
+            return this._context.Teams.AsNoTracking()
                 .Include(team => team.Manager)
                 .Include(team => team.Players)
                 .ThenInclude(membership => membership.User)

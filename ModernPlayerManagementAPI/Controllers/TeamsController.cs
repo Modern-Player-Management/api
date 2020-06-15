@@ -54,11 +54,11 @@ namespace ModernPlayerManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Gets all the user's teams (teams in which the user is either manager or member
+        /// Gets a team from its Id with details like events and games
         /// </summary>
-        /// <returns>The corresponding teams</returns>
+        /// <returns>The corresponding team</returns>
         [HttpGet("{teamId:Guid}")]
-        [ProducesResponseType(typeof(ICollection<TeamDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TeamDTO), StatusCodes.Status200OK)]
         public IActionResult GetTeam(Guid teamId)
         {
             return Ok(this._teamService.GetTeam(teamId, this.GetCurrentUserId()));

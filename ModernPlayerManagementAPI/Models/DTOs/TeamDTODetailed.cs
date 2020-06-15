@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ModernPlayerManagementAPI.Models.DTOs
 {
-    public class TeamDTO
+    public class TeamDTODetailed
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -13,5 +13,7 @@ namespace ModernPlayerManagementAPI.Models.DTOs
         public bool isCurrentUserManager { get; set; }
         public ICollection<UserDTO> Players { get; set; }
         public DateTime Created { get; set; }
+        public ICollection<EventDTO> Events { get; set; }
+        public ICollection<GameDTO> Games { get; set; }
     }
 }

@@ -21,6 +21,13 @@ namespace ModernPlayerManagementAPI.Repositories
 
         public override Team GetById(Guid id)
         {
+            return (from team in this.GetTeamsLazy()
+                where team.Id == id
+                select team).First();
+        }
+        
+        public Team GetByIdDetailed(Guid id)
+        {
             return (from team in this.GetTeamsEager()
                 where team.Id == id
                 select team).First();
@@ -28,10 +35,18 @@ namespace ModernPlayerManagementAPI.Repositories
 
         public ICollection<Team> getUserTeams(Guid userId)
         {
-            return (from team in this.GetTeamsEager()
+            return (from team in this.GetTeamsLazy()
                 where team.ManagerId == userId || team.Players.Select(member => member.UserId).Contains(userId)
                 orderby team.Created
                 select team).ToList();
+        }
+
+        private IIncludableQueryable<Team, User> GetTeamsLazy()
+        {
+            return this._context.Teams.AsNoTracking()
+                .Include(team => team.Manager)
+                .Include(team => team.Players)
+                .ThenInclude(membership => membership.User);
         }
 
         private IIncludableQueryable<Team, ICollection<PlayerStats>> GetTeamsEager()

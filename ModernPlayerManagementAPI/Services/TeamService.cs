@@ -137,25 +137,17 @@ namespace ModernPlayerManagementAPI.Services
                 Players = new List<UserDTO>(),
                 Created = team.Created,
                 Description = team.Description,
-                Image = team.Image,
-                Events = new List<EventDTO>(),
-                Games = new List<GameDTO>()
+                Image = team.Image
             };
 
             return teamDTO;
         }
 
-        public TeamDTO getTeamById(Guid id)
+        public TeamDTODetailed GetTeam(Guid id,Guid userId)
         {
-            return this.mapper.Map<TeamDTO>(this.teamRepository.GetById(id));
-        }
+            var team = this.teamRepository.GetByIdDetailed(id);
 
-        public ICollection<TeamDTO> getTeams(Guid userId)
-        {
-            var teams = this.teamRepository.getUserTeams(userId);
-            return teams.Select(team =>
-            {
-                var dto = new TeamDTO()
+            var dto = new TeamDTODetailed()
                 {
                     Name = team.Name,
                     Created = team.Created,
@@ -193,10 +185,34 @@ namespace ModernPlayerManagementAPI.Services
                     Games = team.Games.Select(game => this.mapper.Map<GameDTO>(game)).ToList()
                 };
                 return dto;
+        }
+
+        public ICollection<TeamDTO> GetTeams(Guid userId)
+        {
+            var teams = this.teamRepository.getUserTeams(userId);
+            return teams.Select(team =>
+            {
+                var dto = new TeamDTO()
+                {
+                    Name = team.Name,
+                    Created = team.Created,
+                    Id = team.Id,
+                    isCurrentUserManager = team.Manager.Id == userId,
+                    Manager = mapper.Map<UserDTO>(team.Manager),
+                    Players = team.Players.Select(membership => new UserDTO()
+                    {
+                        Id = membership.UserId,
+                        Username = membership.User.Username,
+                        Image = membership.User.Image
+                    }).ToList(),
+                    Description = team.Description,
+                    Image = team.Image
+                };
+                return dto;
             }).ToList();
         }
 
-        public void addPlayer(Guid teamId, UserDTO playerDto)
+        public void AddPlayer(Guid teamId, UserDTO playerDto)
         {
             var team = this.teamRepository.GetById(teamId);
 
@@ -221,7 +237,7 @@ namespace ModernPlayerManagementAPI.Services
             }
         }
 
-        public void removePlayer(Guid teamId, UserDTO dto)
+        public void RemovePlayer(Guid teamId, UserDTO dto)
         {
             User player;
             if (dto.Id != Guid.Empty)

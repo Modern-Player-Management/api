@@ -51,7 +51,29 @@ namespace ModernPlayerManagementAPITests
                     }
                     
                     team.Games ??= new List<Game>();
+                    team.Events ??= new List<Event>();
 
+                    return team;
+                });
+            teamRepository.Setup(mock => mock.GetByIdDetailed(It.IsAny<Guid>()))
+                .Returns<Guid>(teamId =>
+                {
+                    var team = this.teams.Find(team => team.Id == teamId);
+                    if (team.ManagerId != null)
+                    {
+                        team.Manager = this.users.Find(u => u.Id == team.ManagerId);
+                    }
+
+                    team.Players ??= new List<Membership>();
+
+                    foreach (var membership in team.Players)
+                    {
+                        membership.User = this.users.First(user => user.Id == membership.UserId);
+                        membership.Team = this.teams.First(team => team.Id == membership.TeamId);
+                    }
+                    
+                    team.Games ??= new List<Game>();
+                    team.Events ??= new List<Event>();
                     return team;
                 });
             teamRepository.Setup(mock => mock.getUserTeams(It.IsAny<Guid>()))
@@ -134,13 +156,15 @@ namespace ModernPlayerManagementAPITests
         public void Get_Team_By_Id()
         {
             // Given
+            var manager = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
             var teamId = Guid.NewGuid();
             var team = new Team
-                {Id = teamId, Created = DateTime.Now, Name = "Test Team"};
+                {Id = teamId, Created = DateTime.Now,ManagerId = manager.Id,Name = "Test Team"};
             this.teams.Add(team);
-
+            this.users.Add(manager);
+            
             // When
-            var fetchedTeam = this.teamService.getTeamById(teamId);
+            var fetchedTeam = this.teamService.GetTeam(teamId,manager.Id);
 
             // Then
             Assert.Equal("Test Team", fetchedTeam.Name);
@@ -188,12 +212,11 @@ namespace ModernPlayerManagementAPITests
             this.users.Add(manager2);
 
             // When
-            List<TeamDTO> getTeams = this.teamService.getTeams(manager1.Id).ToList();
+            List<TeamDTO> getTeams = this.teamService.GetTeams(manager1.Id).ToList();
 
             //Then
             Assert.Equal(2, getTeams.Count);
             Assert.Equal("Ombrelin", getTeams[0].Manager.Username);
-            Assert.Equal(1, getTeams[0].Events.Count);
         }
 
         [Fact]
@@ -213,7 +236,7 @@ namespace ModernPlayerManagementAPITests
             };
 
             // When
-            this.teamService.addPlayer(team.Id, userDTO);
+            this.teamService.AddPlayer(team.Id, userDTO);
 
             // Then
             Assert.Equal(1, this.teams[0].Players.Count);
@@ -233,7 +256,7 @@ namespace ModernPlayerManagementAPITests
             this.teams.Add(team);
 
             // When
-            this.teamService.removePlayer(team.Id, new UserDTO() {Id = user.Id});
+            this.teamService.RemovePlayer(team.Id, new UserDTO() {Id = user.Id});
 
             // Then
             Assert.Equal(0, this.teams[0].Players.Count);

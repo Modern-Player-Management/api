@@ -50,7 +50,18 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(typeof(ICollection<TeamDTO>), StatusCodes.Status200OK)]
         public IActionResult GetTeams()
         {
-            return Ok(this._teamService.getTeams(this.GetCurrentUserId()));
+            return Ok(this._teamService.GetTeams(this.GetCurrentUserId()));
+        }
+
+        /// <summary>
+        /// Gets all the user's teams (teams in which the user is either manager or member
+        /// </summary>
+        /// <returns>The corresponding teams</returns>
+        [HttpGet("{teamId:Guid}")]
+        [ProducesResponseType(typeof(ICollection<TeamDTO>), StatusCodes.Status200OK)]
+        public IActionResult GetTeam(Guid teamId)
+        {
+            return Ok(this._teamService.GetTeam(teamId, this.GetCurrentUserId()));
         }
 
         /// <summary>
@@ -68,7 +79,7 @@ namespace ModernPlayerManagementAPI.Controllers
                 return Unauthorized("You are not the manager of this team");
             }
 
-            this._teamService.addPlayer(teamId, new UserDTO() {Id = playerId});
+            this._teamService.AddPlayer(teamId, new UserDTO() {Id = playerId});
             return Ok();
         }
 
@@ -86,7 +97,7 @@ namespace ModernPlayerManagementAPI.Controllers
                 return Unauthorized("You are not the manager of this team");
             }
 
-            this._teamService.removePlayer(teamId, new UserDTO() {Id = playerId});
+            this._teamService.RemovePlayer(teamId, new UserDTO() {Id = playerId});
             return Ok();
         }
 
@@ -158,7 +169,7 @@ namespace ModernPlayerManagementAPI.Controllers
         {
             var replay = Replay.Deserialize(file.OpenReadStream());
 
-            return Ok(this._teamService.AddGame(replay,teamId));
+            return Ok(this._teamService.AddGame(replay, teamId));
         }
 
         private Guid GetCurrentUserId()

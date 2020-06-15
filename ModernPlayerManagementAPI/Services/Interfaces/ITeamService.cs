@@ -8,10 +8,10 @@ namespace ModernPlayerManagementAPI.Services
     public interface ITeamService
     {
         TeamDTO createTeam(UpsertTeamDTO team, Guid currentUserId);
-        TeamDTO getTeamById(Guid id);
-        ICollection<TeamDTO> getTeams(Guid userId);
-        void addPlayer(Guid teamId, UserDTO player);
-        void removePlayer(Guid teamId, UserDTO dto);
+        public TeamDTODetailed GetTeam(Guid id, Guid userId);
+        ICollection<TeamDTO> GetTeams(Guid userId);
+        void AddPlayer(Guid teamId, UserDTO player);
+        void RemovePlayer(Guid teamId, UserDTO dto);
         void UpdateTeam(Guid teamId, UpsertTeamDTO team);
         void DeleteTeam(Guid Id);
         bool IsUserTeamManager(Guid teamId, Guid userId);

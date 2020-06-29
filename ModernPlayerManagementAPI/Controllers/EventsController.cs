@@ -10,6 +10,7 @@ using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Services;
 using ModernPlayerManagementAPI.Services.Interfaces;
@@ -110,6 +111,13 @@ namespace ModernPlayerManagementAPI.Controllers
             var bytes = Encoding.UTF8.GetBytes(serializedCalendar);
 
             return File(bytes, contentType, "calendar.ics");
+        }
+
+        [AllowAnonymous]
+        [HttpGet("types")]
+        public IActionResult GetTypes()
+        {
+            return Ok(Enum.GetValues(typeof(Event.EventType)).Cast<Event.EventType>().Select(v => v.ToString()).ToList());
         }
     }
 }

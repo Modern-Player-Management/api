@@ -114,6 +114,11 @@ namespace ModernPlayerManagementAPI.Services
             return this.mapper.Map<GameDTO>(team.Games.First(g => g.Name == name));
         }
 
+        public PlayerStatsAvgDTO GetStats(Guid teamId)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public TeamDTO createTeam(InsertTeamDTO teamDto, Guid currentUserId)
         {
@@ -269,7 +274,7 @@ namespace ModernPlayerManagementAPI.Services
         {
             var team = this.teamRepository.GetById(teamId);
 
-            if (teamDto.Image != team.Image)
+            if (teamDto.Image != team.Image && teamDto.Image !=null)
             {
                 if (team.Image != null)
                 {

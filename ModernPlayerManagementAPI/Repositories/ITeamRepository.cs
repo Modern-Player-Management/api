@@ -9,5 +9,6 @@ namespace ModernPlayerManagementAPI.Repositories
         ICollection<Team> getUserTeams(Guid userId);
 
         Team GetByIdDetailed(Guid id);
+        public ICollection<PlayerStatsAvgDTO> GetAverageStats(Guid teamId);
     }
 }

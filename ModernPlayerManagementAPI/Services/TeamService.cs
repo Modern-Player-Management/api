@@ -114,9 +114,9 @@ namespace ModernPlayerManagementAPI.Services
             return this.mapper.Map<GameDTO>(team.Games.First(g => g.Name == name));
         }
 
-        public PlayerStatsAvgDTO GetStats(Guid teamId)
+        public List<PlayerStatsAvgDTO> GetStats(Guid teamId)
         {
-            throw new NotImplementedException();
+            return this.teamRepository.GetAverageStats(teamId).ToList();
         }
 
 

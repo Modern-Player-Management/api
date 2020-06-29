@@ -59,7 +59,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// </summary>
         /// <returns>The corresponding team</returns>
         [HttpGet("{teamId:Guid}")]
-        [ProducesResponseType(typeof(TeamDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TeamDTODetailed), StatusCodes.Status200OK)]
         public IActionResult GetTeam(Guid teamId)
         {
             return Ok(this._teamService.GetTeam(teamId, this.GetCurrentUserId()));

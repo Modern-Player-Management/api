@@ -115,7 +115,7 @@ namespace ModernPlayerManagementAPI.Services
         }
 
 
-        public TeamDTO createTeam(UpsertTeamDTO teamDto, Guid currentUserId)
+        public TeamDTO createTeam(InsertTeamDTO teamDto, Guid currentUserId)
         {
             var team = new Team()
             {
@@ -265,7 +265,7 @@ namespace ModernPlayerManagementAPI.Services
             }
         }
 
-        public void UpdateTeam(Guid teamId, UpsertTeamDTO teamDto)
+        public void UpdateTeam(Guid teamId, UpdateTeamDTO teamDto)
         {
             var team = this.teamRepository.GetById(teamId);
 

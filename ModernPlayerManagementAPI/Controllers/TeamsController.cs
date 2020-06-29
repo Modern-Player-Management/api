@@ -35,7 +35,7 @@ namespace ModernPlayerManagementAPI.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(TeamDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult CreateTeam([FromBody] UpsertTeamDTO dto)
+        public IActionResult CreateTeam([FromBody] InsertTeamDTO dto)
         {
             var team = this._teamService.createTeam(dto, GetCurrentUserId());
 
@@ -108,7 +108,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <param name="dto">DTO containing the new info of the team</param>
         [HttpPut("{teamId:Guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult UpdateTeam(Guid teamId, [FromBody] UpsertTeamDTO dto)
+        public IActionResult UpdateTeam(Guid teamId, [FromBody] UpdateTeamDTO dto)
         {
             if (!this._teamService.IsUserTeamManager(teamId, this.GetCurrentUserId()))
             {

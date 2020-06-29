@@ -42,7 +42,7 @@ namespace ModernPlayerManagementAPITests
             this.mailService.SendMail(user,email, subject,body);
             
             // Then
-            Assert.Equal(1,this.mailsSent.Count);
+            Assert.Single(this.mailsSent);
             Assert.Equal("Test",this.mailsSent.First().To.First().Name);
         }
     }

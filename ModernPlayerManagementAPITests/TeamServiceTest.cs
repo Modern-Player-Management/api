@@ -141,7 +141,7 @@ namespace ModernPlayerManagementAPITests
         {
             // Given
             var manager = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
-            var team = new UpsertTeamDTO()
+            var team = new InsertTeamDTO()
                 {Name = "Test Team"};
 
             // When
@@ -274,7 +274,7 @@ namespace ModernPlayerManagementAPITests
             this.teams.Add(team);
 
             // When 
-            this.teamService.UpdateTeam(team.Id, new UpsertTeamDTO() {Name = "Test Team Updated"});
+            this.teamService.UpdateTeam(team.Id, new UpdateTeamDTO() {Name = "Test Team Updated"});
 
             // Then
             Assert.Equal("Test Team Updated", this.teams[0].Name);

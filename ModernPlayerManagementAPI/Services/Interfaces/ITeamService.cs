@@ -7,12 +7,12 @@ namespace ModernPlayerManagementAPI.Services
 {
     public interface ITeamService
     {
-        TeamDTO createTeam(UpsertTeamDTO team, Guid currentUserId);
+        TeamDTO createTeam(InsertTeamDTO team, Guid currentUserId);
         public TeamDTODetailed GetTeam(Guid id, Guid userId);
         ICollection<TeamDTO> GetTeams(Guid userId);
         void AddPlayer(Guid teamId, UserDTO player);
         void RemovePlayer(Guid teamId, UserDTO dto);
-        void UpdateTeam(Guid teamId, UpsertTeamDTO team);
+        void UpdateTeam(Guid teamId, UpdateTeamDTO team);
         void DeleteTeam(Guid Id);
         bool IsUserTeamManager(Guid teamId, Guid userId);
         EventDTO AddEvent(Guid teamId, UpsertEventDTO dto);

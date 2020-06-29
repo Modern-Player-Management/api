@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Services;
 using RocketLeagueReplayParser;
@@ -170,6 +171,14 @@ namespace ModernPlayerManagementAPI.Controllers
             var replay = Replay.Deserialize(file.OpenReadStream());
 
             return Ok(this._teamService.AddGame(replay, teamId));
+        }
+
+        [HttpGet("{teamId:Guid}/stats")]
+        public IActionResult GetStats(Guid teamId)
+        {
+            var playerStats = this._teamService.GetStats(teamId);
+
+            return Ok(playerStats);
         }
 
         private Guid GetCurrentUserId()

@@ -278,9 +278,14 @@ namespace ModernPlayerManagementAPI.Services
 
                 team.Image = teamDto.Image;
             }
-
-            team.Name = teamDto?.Name;
-            team.Description = teamDto?.Description;
+            if (teamDto.Name != null)
+            {
+                team.Name = teamDto?.Name;
+            }
+            if (teamDto.Description != null)
+            {
+                team.Description = teamDto?.Description;
+            }
             this.teamRepository.Update(team);
         }
 

@@ -110,5 +110,7 @@ namespace ModernPlayerManagementAPITests
                 Assert.Equal("Test Event Found", e.First().Name);
             }
         }
+        
+
     }
 }

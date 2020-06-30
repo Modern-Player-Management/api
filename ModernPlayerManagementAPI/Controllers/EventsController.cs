@@ -84,7 +84,7 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult DeleteEvent(Guid eventId)
         {
-            if (this.eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
+            if (!this.eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
             {
                 return Unauthorized();
             }

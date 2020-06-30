@@ -14,11 +14,15 @@ namespace ModernPlayerManagementAPITests
     public class EventServiceTest
     {
         private List<Event> events;
+        private List<Team> teams;
+        private List<User> users;
         private EventService _eventService;
 
         public EventServiceTest()
         {
             events = new List<Event>();
+            teams = new List<Team>();
+            users = new List<User>();
 
             var eventRepoMock = new Mock<IEventRepository>();
             var teamServiceMock = new Mock<ITeamService>();
@@ -26,6 +30,38 @@ namespace ModernPlayerManagementAPITests
             var teamRepository = new Mock<ITeamRepository>();
             var userRepository = new Mock<IUserRepository>();
 
+            teamRepository.Setup(mock => mock.GetById(It.IsAny<Guid>()))
+                .Returns<Guid>(teamId =>
+                {
+                    var team = this.teams.Find(team => team.Id == teamId);
+                    if (team.ManagerId != null)
+                    {
+                        team.Manager = this.users.Find(u => u.Id == team.ManagerId);
+                    }
+
+                    team.Players ??= new List<Membership>();
+
+                    foreach (var membership in team.Players)
+                    {
+                        membership.User = this.users.First(user => user.Id == membership.UserId);
+                        membership.Team = this.teams.First(team => team.Id == membership.TeamId);
+                    }
+                    
+                    team.Games ??= new List<Game>();
+                    team.Events ??= new List<Event>();
+
+                    return team;
+                });
+            
+            teamServiceMock.Setup(mock => mock.IsUserTeamManager(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns<Guid,Guid>((teamId,
+                userId) =>
+            {
+                var team = teamRepository.Object.GetById(teamId);
+                return team.ManagerId == userId;
+            });
+
+            
+                
             eventRepoMock.Setup(mock => mock.GetById(It.IsAny<Guid>()))
                 .Returns<Guid>(eventId => this.events.Find(evt => evt.Id == eventId));
 
@@ -161,6 +197,73 @@ namespace ModernPlayerManagementAPITests
 
             // Then
             Assert.Equal("Test Event Description Updated", this.events.First().Description);
+        }
+
+        [Fact]
+        void DeleteEvent_Test()
+        {
+            // Given
+            var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.Empty};
+            var evt = new Event()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Event",
+                Description = "Test Event Description",
+                Start = DateTime.Now,
+                End = DateTime.Now,
+                Discrepancies = new List<Discrepancy>(),
+                Participations = new List<Participation>()
+                    {new Participation() {Created = DateTime.Now, User = user, UserId = user.Id}},
+                Created = DateTime.Now,
+                Type = Event.EventType.Coaching
+            };
+
+            events.Add(evt);
+            
+            // When
+            this._eventService.DeleteEvent(evt.Id);
+            
+            // Then
+            Assert.Empty(this.events);
+        }
+
+        [Fact(Skip = "TODO")]
+        void IsUserTeamManager_Test()
+        {
+            // Given
+            var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+            this.users.Add(user);
+            
+            var team = new Team
+            {
+                Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team",
+                Players = new List<Membership>() { }, Events = new List<Event>(),
+                ManagerId = user.Id,
+                Manager = user
+            };
+            this.teams.Add(team);
+            
+            var evt = new Event()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Event",
+                Description = "Test Event Description",
+                Start = DateTime.Now,
+                End = DateTime.Now,
+                Discrepancies = new List<Discrepancy>(),
+                Participations = new List<Participation>()
+                    {new Participation() {Created = DateTime.Now, User = user, UserId = user.Id}},
+                Created = DateTime.Now,
+                TeamId = team.Id,
+                Type = Event.EventType.Coaching
+            };
+            this.events.Add(evt);
+            
+            // When
+            var result = this._eventService.IsUserTeamManager(evt.Id, user.Id);
+            
+            // Then
+            Assert.True(result);
         }
     }
 }

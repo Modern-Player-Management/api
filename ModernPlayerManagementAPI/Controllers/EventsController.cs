@@ -66,7 +66,7 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult UpdateEvent([FromBody] UpsertEventDTO dto, Guid eventId)
         {
-            if (this.eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
+            if (!this.eventService.IsUserTeamManager(eventId, this.GetCurrentUserId()))
             {
                 return Unauthorized();
             }

@@ -12,6 +12,6 @@ namespace ModernPlayerManagementAPI.Models
         public int Score { get; set; }
 
         [NotMapped]
-        public float GoalShots => Goals == 0 ? 0 : (this.Goals /  this.Shots) * 100;
+        public float GoalShots => this.Shots == 0 ? 0 : (this.Goals /  this.Shots) * 100;
     }
 }

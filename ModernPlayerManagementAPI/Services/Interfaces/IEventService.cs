@@ -8,7 +8,7 @@ namespace ModernPlayerManagementAPI.Services
 {
     public interface IEventService
     {
-        void ConfirmEvent(Guid eventId, Guid getCurrentUserId);
+        void SetPresence(Guid eventId, Guid getCurrentUserId,EventPresenceDTO dto);
         void AddDiscrepancy(Guid eventId, UpsertDiscrepancyDTO dto, Guid getCurrentUserId);
         void UpdateEvent(UpsertEventDTO dto, Guid eventId);
         void DeleteEvent(Guid guid);

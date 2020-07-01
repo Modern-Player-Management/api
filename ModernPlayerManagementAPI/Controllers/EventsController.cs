@@ -37,11 +37,11 @@ namespace ModernPlayerManagementAPI.Controllers
         /// Confirms the presence of the current user to an event
         /// </summary>
         /// <param name="eventId">Id of the event</param>
-        [HttpPost("{eventId:Guid}/confirm")]
+        [HttpPost("{eventId:Guid}/presence")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult ConfirmEvent(Guid eventId)
+        public IActionResult SetPresence(Guid eventId, [FromBody] EventPresenceDTO dto)
         {
-            this.eventService.ConfirmEvent(eventId, this.GetCurrentUserId());
+            this.eventService.SetPresence(eventId, this.GetCurrentUserId(), dto);
             return Ok();
         }
 

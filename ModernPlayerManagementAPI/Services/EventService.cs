@@ -58,12 +58,12 @@ namespace ModernPlayerManagementAPI.Services
              return calendar;
         }
 
-        public void ConfirmEvent(Guid eventId, Guid userId)
+        public void SetPresence(Guid eventId, Guid userId,EventPresenceDTO dto)
         {
             var evt = this._eventRepository.GetById(eventId);
             var participation = evt.Participations.First(part => part.UserId == userId);
 
-            participation.Confirmed = true;
+            participation.Confirmed = dto.Present;
 
             this._eventRepository.Update(evt);
         }

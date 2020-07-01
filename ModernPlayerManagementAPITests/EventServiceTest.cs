@@ -122,7 +122,7 @@ namespace ModernPlayerManagementAPITests
             events.Add(evt);
 
             // When
-            this._eventService.ConfirmEvent(evt.Id, user.Id);
+            this._eventService.SetPresence(evt.Id, user.Id, new EventPresenceDTO(){Present = true});
 
             // Then
             Assert.True(this.events.First().Participations.First().Confirmed);

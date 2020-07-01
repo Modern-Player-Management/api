@@ -13,5 +13,7 @@ namespace ModernPlayerManagementAPI.Models.DTOs
         public Event.EventType Type { get; set; }
         public ICollection<ParticipationDTO> Participations { get; set; }
         public ICollection<DiscrepancyDTO> Discrepancies { get; set; }
+
+        public Boolean CurrentHasConfirmed { get; set; }
     }
 }

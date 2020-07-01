@@ -148,48 +148,49 @@ namespace ModernPlayerManagementAPI.Services
             return teamDTO;
         }
 
-        public TeamDTODetailed GetTeam(Guid id,Guid userId)
+        public TeamDTODetailed GetTeam(Guid id, Guid userId)
         {
             var team = this.teamRepository.GetByIdDetailed(id);
 
             var dto = new TeamDTODetailed()
+            {
+                Name = team.Name,
+                Created = team.Created,
+                Id = team.Id,
+                isCurrentUserManager = team.Manager.Id == userId,
+                Manager = mapper.Map<UserDTO>(team.Manager),
+                Players = team.Players.Select(membership => new UserDTO()
                 {
-                    Name = team.Name,
-                    Created = team.Created,
-                    Id = team.Id,
-                    isCurrentUserManager = team.Manager.Id == userId,
-                    Manager = mapper.Map<UserDTO>(team.Manager),
-                    Players = team.Players.Select(membership => new UserDTO()
+                    Id = membership.UserId,
+                    Username = membership.User.Username,
+                    Image = membership.User.Image
+                }).ToList(),
+                Description = team.Description,
+                Image = team.Image,
+                Events = team.Events.Select(evt => new EventDTO()
+                {
+                    Id = evt.Id,
+                    Name = evt.Name,
+                    Description = evt.Description,
+                    Start = evt.Start,
+                    End = evt.End,
+                    Type = evt.Type,
+                    Participations = evt.Participations.Select(e => new ParticipationDTO()
+                        {Confirmed = e.Confirmed, UserId = e.UserId, Username = e.User.Username}).ToList(),
+                    Discrepancies = evt.Discrepancies.Select(e => new DiscrepancyDTO()
                     {
-                        Id = membership.UserId,
-                        Username = membership.User.Username,
-                        Image = membership.User.Image
+                        Id = e.Id,
+                        DelayLength = e.DelayLength,
+                        Reason = e.Reason,
+                        Type = e.Type,
+                        UserId = e.UserId,
+                        Username = e.User.Username
                     }).ToList(),
-                    Description = team.Description,
-                    Image = team.Image,
-                    Events = team.Events.Select(evt => new EventDTO()
-                    {
-                        Id = evt.Id,
-                        Name = evt.Name,
-                        Description = evt.Description,
-                        Start = evt.Start,
-                        End = evt.End,
-                        Type = evt.Type,
-                        Participations = evt.Participations.Select(e => new ParticipationDTO()
-                            {Confirmed = e.Confirmed, UserId = e.UserId, Username = e.User.Username}).ToList(),
-                        Discrepancies = evt.Discrepancies.Select(e => new DiscrepancyDTO()
-                        {
-                            Id = e.Id,
-                            DelayLength = e.DelayLength,
-                            Reason = e.Reason,
-                            Type = e.Type,
-                            UserId = e.UserId,
-                            Username = e.User.Username
-                        }).ToList()
-                    }).ToList(),
-                    Games = team.Games.Select(game => this.mapper.Map<GameDTO>(game)).ToList()
-                };
-                return dto;
+                    CurrentHasConfirmed = team.ManagerId == userId || evt.Participations.First(p => p.UserId == userId).Confirmed
+                }).ToList(),
+                Games = team.Games.Select(game => this.mapper.Map<GameDTO>(game)).ToList()
+            };
+            return dto;
         }
 
         public ICollection<TeamDTO> GetTeams(Guid userId)
@@ -274,7 +275,7 @@ namespace ModernPlayerManagementAPI.Services
         {
             var team = this.teamRepository.GetById(teamId);
 
-            if (teamDto.Image != team.Image && teamDto.Image !=null)
+            if (teamDto.Image != team.Image && teamDto.Image != null)
             {
                 if (team.Image != null)
                 {
@@ -283,14 +284,17 @@ namespace ModernPlayerManagementAPI.Services
 
                 team.Image = teamDto.Image;
             }
+
             if (teamDto.Name != null)
             {
                 team.Name = teamDto?.Name;
             }
+
             if (teamDto.Description != null)
             {
                 team.Description = teamDto?.Description;
             }
+
             this.teamRepository.Update(team);
         }
 

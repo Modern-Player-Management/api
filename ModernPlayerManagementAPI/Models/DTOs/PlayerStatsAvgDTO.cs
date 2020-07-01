@@ -9,6 +9,6 @@
         public double Assists { get; set; }= 0;
         public double Score { get; set; }
         
-        public double GoalShots => Goals == 0 ? 0 : (this.Shots / this.Goals) * 100;
+        public double GoalShots => Goals == 0 ? 0 : (this.Goals /  this.Shots) * 100;
     }
 }

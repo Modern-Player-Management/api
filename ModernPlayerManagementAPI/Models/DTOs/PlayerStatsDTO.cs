@@ -8,6 +8,6 @@
         public int Score { get; set; }= 0;
         public int Shots { get; set; }= 0;
         public int Assists { get; set; }= 0;
-        public float GoalShots => Goals == 0 ? 0 : (this.Shots / this.Goals) * 100;
+        public float GoalShots => Goals == 0 ? 0 : (this.Goals /  this.Shots) * 100;
     }
 }

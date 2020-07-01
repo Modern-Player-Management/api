@@ -6,7 +6,7 @@ using ModernPlayerManagementAPI.Services.Interfaces;
 
 namespace ModernPlayerManagementAPI.Controllers
 {
-    [Microsoft.AspNetCore.Components.Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {

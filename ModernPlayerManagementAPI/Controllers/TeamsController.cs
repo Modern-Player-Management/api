@@ -166,6 +166,7 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <param name="teamId">The Id of the team on which to add the game</param>
         /// <returns>A DTO tat represents the Game</returns>
         [HttpPost("{teamId:Guid}/games")]
+        [ProducesResponseType(typeof(GameDTO), StatusCodes.Status200OK)]
         public IActionResult UploadReplay(IFormFile file, Guid teamId)
         {
             var replay = Replay.Deserialize(file.OpenReadStream());
@@ -173,11 +174,16 @@ namespace ModernPlayerManagementAPI.Controllers
             return Ok(this._teamService.AddGame(replay, teamId));
         }
 
+        /// <summary>
+        /// Computes the average stats of the players based on the uploaded games
+        /// </summary>
+        /// <param name="teamId">Id of the team</param>
+        /// <returns>The average player stat for each player</returns>
         [HttpGet("{teamId:Guid}/stats")]
+        [ProducesResponseType(typeof(PlayerStatsAvgDTO), StatusCodes.Status200OK)]
         public IActionResult GetStats(Guid teamId)
         {
             var playerStats = this._teamService.GetStats(teamId);
-
             return Ok(playerStats);
         }
 

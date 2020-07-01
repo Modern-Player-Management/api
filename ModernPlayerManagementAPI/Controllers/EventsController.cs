@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -99,11 +100,16 @@ namespace ModernPlayerManagementAPI.Controllers
             return Guid.Parse(User.FindFirst(ClaimTypes.Name)?.Value);
         }
 
+        /// <summary>
+        /// Get the users ICAL feed with all his upcoming events
+        /// </summary>
+        /// <param name="icalSecret">The users ICAL secret</param>
+        /// <returns>The ICAL feed</returns>
         [AllowAnonymous]
         [HttpGet("ical/{icalSecret:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetICalFeed(Guid icalSecret)
         {
-
             var calendar = this.eventService.GetUserCalendar(icalSecret);
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(calendar);
@@ -113,8 +119,13 @@ namespace ModernPlayerManagementAPI.Controllers
             return File(bytes, contentType, "calendar.ics");
         }
 
+        /// <summary>
+        /// Gets a list of all the event types available in MPM
+        /// </summary>
+        /// <returns>List of the event types</returns>
         [AllowAnonymous]
         [HttpGet("types")]
+        [ProducesResponseType(typeof(List<string>),StatusCodes.Status200OK)]
         public IActionResult GetTypes()
         {
             return Ok(Enum.GetValues(typeof(Event.EventType)).Cast<Event.EventType>().Select(v => v.ToString()).ToList());

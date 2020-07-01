@@ -22,10 +22,10 @@ namespace ModernPlayerManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Updates a discrepancy from its id
+        /// Updates a discrepancy (Team Manager Only)
         /// </summary>
         /// <param name="discrepancyId">Id of the discrepancy</param>
-        /// <param name="dto">DTO containing the new informations</param>
+        /// <param name="dto">DTO containing the new data</param>
         [HttpPut("{discrepancyId:Guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult UpdateDiscrepancy(Guid discrepancyId, [FromBody] UpsertDiscrepancyDTO dto)
@@ -40,7 +40,7 @@ namespace ModernPlayerManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Deletes a discrepancy
+        /// Deletes a discrepancy (Team Manager Only)
         /// </summary>
         /// <param name="discrepancyId">Id of the discrepancy</param>
         [HttpDelete("{discrepancyId:Guid}")]

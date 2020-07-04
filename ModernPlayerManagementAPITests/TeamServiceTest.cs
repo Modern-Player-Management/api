@@ -128,8 +128,18 @@ namespace ModernPlayerManagementAPITests
             var eventRespository = new Mock<IEventRepository>();
             eventRespository.Setup(mock => mock.GetById(It.IsAny<Guid>())).Returns<Guid>(eventId =>
             {
-                return this.teams.Select(team => team.Events).SelectMany(events => events)
+                var evt = this.teams.Select(team => team.Events).SelectMany(events => events)
                     .First(evt => evt.Id == eventId);
+
+                foreach (var participation in evt.Participations)
+                {
+                    if (participation.UserId != null)
+                    {
+                        participation.User = this.users.First(u => u.Id == participation.UserId);
+                    }
+                }
+                
+                return evt;
             });
 
             teamService = new TeamService(teamRepository.Object, userRepository.Object, mapper, fileService.Object,
@@ -303,10 +313,12 @@ namespace ModernPlayerManagementAPITests
         public void Add_Event_Test()
         {
             // Given
+            var user = new User {Username = "Ombrelin", Email = "arsene@lapostolet.fr", Id = Guid.NewGuid()};
+            this.users.Add(user);
             var team = new Team
             {
                 Id = Guid.NewGuid(), Created = DateTime.Now, Name = "Test Team",
-                Players = new List<Membership>() { }, Events = new List<Event>()
+                Players = new List<Membership>() { }, Events = new List<Event>(),ManagerId = user.Id
             };
             this.teams.Add(team);
 

@@ -50,13 +50,15 @@ namespace ModernPlayerManagementAPI.Services
                     {Created = DateTime.Now, Confirmed = false, UserId = membership.UserId}).ToList(),
                 Type = dto.Type
             };
+            evt.Participations.Add(new Participation()
+                {Created = DateTime.Now, Confirmed = false, UserId = team.ManagerId});
             team.Events ??= new List<Event>();
             team.Events.Add(evt);
             this.teamRepository.Update(team);
 
             evt = this.eventRepository.GetById(evt.Id);
 
-            var responseDTO = new EventDTO()
+            var responseDto = new EventDTO()
             {
                 Id = evt.Id,
                 Name = evt.Name,
@@ -69,7 +71,7 @@ namespace ModernPlayerManagementAPI.Services
                 Discrepancies = new List<DiscrepancyDTO>()
             };
 
-            return responseDTO;
+            return responseDto;
         }
 
         public GameDTO AddGame(Replay replay, Guid teamId)
@@ -186,7 +188,8 @@ namespace ModernPlayerManagementAPI.Services
                         UserId = e.UserId,
                         Username = e.User.Username
                     }).ToList(),
-                    CurrentHasConfirmed = team.ManagerId == userId || evt.Participations.First(p => p.UserId == userId).Confirmed
+                    CurrentHasConfirmed =
+                                          evt.Participations.First(p => p.UserId == userId).Confirmed
                 }).ToList(),
                 Games = team.Games.Select(game => this.mapper.Map<GameDTO>(game)).ToList()
             };

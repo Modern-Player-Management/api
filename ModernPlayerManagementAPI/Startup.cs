@@ -52,6 +52,7 @@ namespace ModernPlayerManagementAPI
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IMailService, MailService>();
             services.AddScoped<IDiscrepancyService, DiscrepancyService>();
+            services.AddScoped<IGameService,GameService>();
             services.AddAutoMapper(typeof(Mappings));
             services.AddScoped<ISmtpClient, SmtpClient>();
 

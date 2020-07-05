@@ -112,10 +112,11 @@ namespace ModernPlayerManagementAPI.Services
             };
 
             var team = this.teamRepository.GetById(teamId);
+            team.Games ??= new List<Game>();
             team.Games.Add(game);
 
-            this.teamRepository.Update(team);
-            team = this.teamRepository.GetById(teamId);
+            this.teamRepository.Update(team); 
+            team = this.teamRepository.GetById(teamId); // TODO replace with getById form game repo
             return this.mapper.Map<GameDTO>(team.Games.First(g => g.Name == name));
         }
 

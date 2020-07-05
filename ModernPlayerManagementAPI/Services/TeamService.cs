@@ -50,8 +50,11 @@ namespace ModernPlayerManagementAPI.Services
                     {Created = DateTime.Now, Confirmed = false, UserId = membership.UserId}).ToList(),
                 Type = dto.Type
             };
-            evt.Participations.Add(new Participation()
-                {Created = DateTime.Now, Confirmed = false, UserId = team.ManagerId});
+            if (!evt.Participations.Select(p => p.UserId).Contains(team.ManagerId))
+            {
+                evt.Participations.Add(new Participation()
+                    {Created = DateTime.Now, Confirmed = false, UserId = team.ManagerId});
+            }
             team.Events ??= new List<Event>();
             team.Events.Add(evt);
             this.teamRepository.Update(team);

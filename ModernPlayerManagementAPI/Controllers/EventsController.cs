@@ -94,7 +94,7 @@ namespace ModernPlayerManagementAPI.Controllers
 
             return Ok();
         }
-
+        
         private Guid GetCurrentUserId()
         {
             return Guid.Parse(User.FindFirst(ClaimTypes.Name)?.Value);

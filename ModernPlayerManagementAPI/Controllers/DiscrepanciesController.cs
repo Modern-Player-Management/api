@@ -22,7 +22,7 @@ namespace ModernPlayerManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Updates a discrepancy (Team Manager Only)
+        /// Updates a discrepancy (Issuer Only)
         /// </summary>
         /// <param name="discrepancyId">Id of the discrepancy</param>
         /// <param name="dto">DTO containing the new data</param>
@@ -40,7 +40,7 @@ namespace ModernPlayerManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Deletes a discrepancy (Team Manager Only)
+        /// Deletes a discrepancy (Issuer Only)
         /// </summary>
         /// <param name="discrepancyId">Id of the discrepancy</param>
         [HttpDelete("{discrepancyId:Guid}")]

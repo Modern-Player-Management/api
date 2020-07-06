@@ -71,6 +71,10 @@ namespace ModernPlayerManagementAPI.Services
         public void AddDiscrepancy(Guid eventId, UpsertDiscrepancyDTO dto, Guid userId)
         {
             var evt = this._eventRepository.GetById(eventId);
+            if (evt.Discrepancies.Select(d => d.UserId).Contains(userId))
+            {
+                throw new ArgumentException("You already have a discrepancy on this event");
+            }
             var discrepancy = new Discrepancy()
             {
                 Created = DateTime.Now,

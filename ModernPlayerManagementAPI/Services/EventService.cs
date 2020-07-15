@@ -97,7 +97,9 @@ namespace ModernPlayerManagementAPI.Services
         {
             var team = this.teamRepository.GetById(evt.TeamId);
             var manager = team.Manager;
-            var currentUser = team.Players.First(membership => membership.UserId == userId).User;
+            var players = team.Players.Select(membership => membership.User).ToList();
+            players.Add(team.Manager);
+            var currentUser = players.First(user => user.Id == userId);
             var body =
                 $"{currentUser.Username} has issued a {dto.Type} {(dto.Type == Discrepancy.DiscrepancyType.Delay ? $"( {dto.DelayLength} )" : "")} " +
                 $"for the event {evt.Name} ({evt.Start} - {evt.End})";

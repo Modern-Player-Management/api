@@ -10,7 +10,7 @@ namespace ModernPlayerManagementAPI.Repositories
     public class EventRepository : Repository<Event>, IEventRepository
     {
         private readonly ITeamRepository _teamRepository;
-        
+
         public EventRepository(ApplicationDbContext context, ITeamRepository teamRepository) : base(context)
         {
             _teamRepository = teamRepository;
@@ -18,13 +18,14 @@ namespace ModernPlayerManagementAPI.Repositories
 
         public override Event GetById(Guid id)
         {
-            return (from evt in this._context.Events.Include(e => e.Participations) select evt).First(e => e.Id == id);
+            return (from evt in this._context.Events.Include(e => e.Participations).Include(e => e.Discrepancies)
+                select evt).First(e => e.Id == id);
         }
 
         public ICollection<Event> GetUserFutureEvents(Guid userId)
         {
             var teams = this._teamRepository.getUserTeams(userId);
-            
+
             return (
                 from evt in this._context.Events.Include(e => e.Participations).ThenInclude(p => p.User)
                 where teams.Select(team => team.Id).Contains(evt.TeamId)

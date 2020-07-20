@@ -28,10 +28,5 @@ namespace ModernPlayerManagementAPI.Services
 
             this.smtpClient.Send(mail);
         }
-
-        ~MailService()
-        {
-            this.smtpClient.Disconnect(true);
-        }
     }
 }

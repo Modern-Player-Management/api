@@ -104,7 +104,7 @@ namespace ModernPlayerManagementAPI.Services
                 $"{currentUser.Username} has issued a {dto.Type} {(dto.Type == Discrepancy.DiscrepancyType.Delay ? $"( {dto.DelayLength} )" : "")} " +
                 $"for the event {evt.Name} ({evt.Start} - {evt.End})";
 
-            this.mailService.SendMail(manager.Username, manager.Email, "Discrepancy Notification", body);
+            //this.mailService.SendMail(manager.Username, manager.Email, "Discrepancy Notification", body);
         }
 
         public void UpdateEvent(UpsertEventDTO dto, Guid eventId)

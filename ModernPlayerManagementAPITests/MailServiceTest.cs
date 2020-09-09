@@ -29,7 +29,7 @@ namespace ModernPlayerManagementAPITests
             this.mailService = new MailService(mock.Object);
         }
 
-        [Fact]
+        [Fact(Skip = "Removed Mail")]
         private void SendMailTest()
         {
             // Given

@@ -16,6 +16,11 @@ namespace ModernPlayerManagementAPI.Models
             Absence,
             Delay
         }
+        
+        public bool IsUserDiscrepancyIssuer(Guid userId)
+        {
+            return UserId == userId;
+        }
 
         public int DelayLength { get; set; }
     }

@@ -40,22 +40,13 @@ namespace ModernPlayerManagementAPI.Services
             var user = this._userRepository.GetByICalSecret(icalSecret);
             var events = this._eventRepository.GetUserFutureEvents(user.Id);
             
-             var calendarEvents = events.Select(evt => new CalendarEvent()
-             {
-                 Start = new CalDateTime(evt.Start),
-                 End = new CalDateTime(evt.End),
-                 Summary = evt.Name,
-                 Attendees = evt.Participations.Select(p => new Attendee(){CommonName = p.User.Username, Value = new Uri($"mailto:{p.User.Email}")}).ToList(),
-                 Description = evt.Description
-             });
+            var calendar = new Calendar();
+            events
+                 .Select(e => e.GetAsICal())
+                 .ToList()
+                 .ForEach(calendarEvent => calendar.Events.Add(calendarEvent));
             
-             var calendar = new Calendar();
-             foreach (var calendarEvent in calendarEvents)
-             {
-                 calendar.Events.Add(calendarEvent);
-             }
-
-             return calendar;
+            return calendar;
         }
 
         public void SetPresence(Guid eventId, Guid userId,EventPresenceDTO dto)
@@ -71,10 +62,6 @@ namespace ModernPlayerManagementAPI.Services
         public void AddDiscrepancy(Guid eventId, UpsertDiscrepancyDTO dto, Guid userId)
         {
             var evt = this._eventRepository.GetById(eventId);
-            if (evt.Discrepancies.Select(d => d.UserId).Contains(userId))
-            {
-                throw new ArgumentException("You already have a discrepancy on this event");
-            }
             var discrepancy = new Discrepancy()
             {
                 Created = DateTime.Now,
@@ -85,10 +72,7 @@ namespace ModernPlayerManagementAPI.Services
                 UserId = userId
             };
 
-            evt.Discrepancies ??= new List<Discrepancy>();
-            evt.Discrepancies.Add(discrepancy);
-
-            SendNotification(dto, userId, evt);
+            evt.AddDiscrepancy(discrepancy);
 
             this._eventRepository.Update(evt);
         }

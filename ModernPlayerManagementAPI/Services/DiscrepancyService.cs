@@ -18,7 +18,7 @@ namespace ModernPlayerManagementAPI.Services
         public bool IsUserDiscrepancyIssuer(Guid userId, Guid discrepancyId)
         {
             var discrepancy = this.discrepancyRepository.GetById(discrepancyId);
-            return discrepancy.UserId == userId;
+            return discrepancy.IsUserDiscrepancyIssuer(userId);
         }
 
         public void DeleteDiscrepancy(Guid discrepancyId)

@@ -20,8 +20,16 @@ namespace ModernPlayerManagementAPI.Models
         public ICollection<Membership> Players { get; set; }
         public ICollection<Game> Games { get; set; }
 
+        public Team()
+        {
+            Events ??= new List<Event>();
+            Players ??= new List<Membership>();
+            Games ??= new List<Game>();
+        }
+        
         public void AddEvent(Event evt)
         {
+            
             Events.Add(evt);
         }
 

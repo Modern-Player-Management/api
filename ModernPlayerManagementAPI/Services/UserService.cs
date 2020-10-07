@@ -37,7 +37,7 @@ namespace ModernPlayerManagementAPI.Services
         {
             var user = (from u in this.userRepository.GetAll()
                 where u.Username == username
-                select u).First();
+                select u).FirstOrDefault();
 
             return user == null;
         }

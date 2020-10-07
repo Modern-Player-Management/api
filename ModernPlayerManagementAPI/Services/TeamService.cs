@@ -194,7 +194,7 @@ namespace ModernPlayerManagementAPI.Services
 
         public void AddPlayer(Guid teamId, UserDTO playerDto)
         {
-            var team = this.teamRepository.GetById(teamId);
+            var team = this.teamRepository.GetByIdDetailed(teamId);
 
             var player = GetUserFromDto(playerDto);
 

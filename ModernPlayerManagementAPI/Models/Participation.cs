@@ -10,6 +10,7 @@ namespace ModernPlayerManagementAPI.Models
         [Required]
         public Guid EventId { get; set; }
         public Guid UserId { get; set; }
-        [ForeignKey("UserId")] public User User { get; set; }
+        [ForeignKey("UserId")] 
+        public User User { get; set; }
     }
 }

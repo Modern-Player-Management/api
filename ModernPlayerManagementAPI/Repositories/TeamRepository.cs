@@ -23,11 +23,12 @@ namespace ModernPlayerManagementAPI.Repositories
 
         public override void Update(Team entity)
         {
+            _entities.Update(entity);
             foreach (var evt in entity.Events)
             {
                 events.Update(evt);
             }
-            base.Update(entity);
+            _context.SaveChanges();
         }
 
         public override Team GetById(Guid id)

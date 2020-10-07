@@ -10,13 +10,24 @@ namespace ModernPlayerManagementAPI.Repositories
 {
     public class TeamRepository : Repository<Team>, ITeamRepository
     {
+        private readonly DbSet<Event> events;
         public TeamRepository(ApplicationDbContext context) : base(context)
         {
+            events = context.Set<Event>();
         }
 
         public override ICollection<Team> GetAll()
         {
             return GetTeamsEager().ToList();
+        }
+
+        public override void Update(Team entity)
+        {
+            foreach (var evt in entity.Events)
+            {
+                events.Update(evt);
+            }
+            base.Update(entity);
         }
 
         public override Team GetById(Guid id)

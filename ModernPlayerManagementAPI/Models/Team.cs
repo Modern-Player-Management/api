@@ -59,6 +59,10 @@ namespace ModernPlayerManagementAPI.Models
             if (Players.Select(member => member.UserId).Contains(player.Id))
             {
                 Players.Remove(Players.First(membership => membership.UserId == player.Id));
+                foreach (var evt in Events)
+                {
+                    evt.Participations.Remove(evt.Participations.First(p => p.UserId == player.Id));
+                }
             }
             else
             {

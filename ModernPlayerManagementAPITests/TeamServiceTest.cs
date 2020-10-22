@@ -137,9 +137,10 @@ namespace ModernPlayerManagementAPITests
             });
             
             var participationRepository = new Mock<IRepository<Participation>>();
+            var gameRepository = new Mock<IRepository<Game>>();
 
             teamService = new TeamService(teamRepository.Object, userRepository.Object, mapper, fileService.Object,
-                eventRespository.Object, participationRepository.Object);
+                eventRespository.Object, gameRepository.Object,participationRepository.Object);
         }
 
         [Fact]
@@ -151,7 +152,7 @@ namespace ModernPlayerManagementAPITests
                 {Name = "Test Team"};
 
             // When
-            teamService.createTeam(team, manager.Id);
+            teamService.CreateTeam(team, manager.Id);
 
             // Then
             Assert.Equal(this.teams[0].ManagerId, manager.Id);

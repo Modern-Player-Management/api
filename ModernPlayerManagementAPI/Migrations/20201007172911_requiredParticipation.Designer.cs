@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ModernPlayerManagementAPI.Database;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,9 +10,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ModernPlayerManagementAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201007172911_requiredParticipation")]
+    partial class requiredParticipation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -327,7 +329,7 @@ namespace ModernPlayerManagementAPI.Migrations
 
             modelBuilder.Entity("ModernPlayerManagementAPI.Models.Participation", b =>
                 {
-                    b.HasOne("ModernPlayerManagementAPI.Models.Event", "Event")
+                    b.HasOne("ModernPlayerManagementAPI.Models.Event", null)
                         .WithMany("Participations")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)

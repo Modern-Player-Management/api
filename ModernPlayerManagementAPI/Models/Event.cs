@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
 
 namespace ModernPlayerManagementAPI.Models
 {
@@ -20,6 +24,28 @@ namespace ModernPlayerManagementAPI.Models
             Meeting,
             Tournament,
             Coaching
+        }
+
+        public CalendarEvent GetAsICal()
+        {
+            return new CalendarEvent()
+            {
+                Start = new CalDateTime(Start),
+                End = new CalDateTime(End),
+                Summary = Name,
+                Attendees = Participations.Select(p => new Attendee()
+                    {CommonName = p.User.Username, Value = new Uri($"mailto:{p.User.Email}")}).ToList(),
+                Description = Description
+            };
+        }
+
+        public void AddDiscrepancy(Discrepancy d)
+        {
+            if (Discrepancies.Select(d => d.UserId).Contains(d.UserId))
+            {
+                throw new ArgumentException("You already have a discrepancy on this event");
+            }
+            Discrepancies.Add(d);
         }
     }
 }

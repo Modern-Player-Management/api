@@ -38,7 +38,7 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult CreateTeam([FromBody] InsertTeamDTO dto)
         {
-            var team = this._teamService.createTeam(dto, GetCurrentUserId());
+            var team = this._teamService.CreateTeam(dto, GetCurrentUserId());
 
             return Created($"api/Teams/${team.Id}", team);
         }

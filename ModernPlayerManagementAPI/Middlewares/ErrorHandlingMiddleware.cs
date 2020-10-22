@@ -26,7 +26,7 @@ namespace ModernPlayerManagementAPI.Middlewares
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.StackTrace);
+                this.logger.Log(LogLevel.Error,ex.StackTrace);
                 await HandleExceptionAsync(context, ex);
             }
         }

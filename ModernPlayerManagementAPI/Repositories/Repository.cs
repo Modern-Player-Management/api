@@ -10,7 +10,7 @@ namespace ModernPlayerManagementAPI.Repositories
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         protected readonly ApplicationDbContext _context;
-        private readonly DbSet<T> _entities;
+        protected readonly DbSet<T> _entities;
 
         public Repository(ApplicationDbContext context)
         {

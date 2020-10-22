@@ -17,25 +17,25 @@ namespace ModernPlayerManagementAPI.Services
 {
     public class UserService : IUserService
     {
-        private IUserRepository _userRepository { get; set; }
-        private readonly AppSettings _appSettings;
-        private readonly IFilesService _filesService;
-        private readonly IEmailValidator _emailValidator;
-        private readonly IMapper _mapper;
+        private readonly IUserRepository userRepository;
+        private readonly AppSettings appSettings;
+        private readonly IFilesService filesService;
+        private readonly IEmailValidator emailValidator;
+        private readonly IMapper mapper;
 
         public UserService(IOptions<AppSettings> appSettings, IFilesService filesService,
             IEmailValidator emailValidator, IMapper mapper, IUserRepository userRepository)
         {
-            _appSettings = appSettings?.Value;
-            _filesService = filesService;
-            _emailValidator = emailValidator;
-            _mapper = mapper;
-            _userRepository = userRepository;
+            this.appSettings = appSettings?.Value;
+            this.filesService = filesService;
+            this.emailValidator = emailValidator;
+            this.mapper = mapper;
+            this.userRepository = userRepository;
         }
 
         public bool IsUniqueUser(string username)
         {
-            var user = (from u in this._userRepository.GetAll()
+            var user = (from u in this.userRepository.GetAll()
                 where u.Username == username
                 select u).FirstOrDefault();
 
@@ -44,9 +44,9 @@ namespace ModernPlayerManagementAPI.Services
 
         public User Authenticate(string username, string password)
         {
-            var user = (from u in this._userRepository.GetAll()
+            var user = (from u in this.userRepository.GetAll()
                 where u.Username == username
-                select u).FirstOrDefault();
+                select u).First();
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
@@ -54,7 +54,7 @@ namespace ModernPlayerManagementAPI.Services
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -81,7 +81,7 @@ namespace ModernPlayerManagementAPI.Services
                 throw new ArgumentException(passwordValidity);
             }
 
-            User user = new User()
+            var user = new User()
             {
                 Username = username,
                 Password = BCrypt.Net.BCrypt.HashPassword(password),
@@ -89,19 +89,19 @@ namespace ModernPlayerManagementAPI.Services
                 CalendarSecret = Guid.NewGuid()
             };
 
-            this._userRepository.Insert(user);
+            this.userRepository.Insert(user);
 
             return user;
         }
 
         public void Update(UpdateUserDTO dto, Guid userId)
         {
-            var user = this._userRepository.GetById(userId);
+            var user = this.userRepository.GetById(userId);
             if (user.Image != dto.Image && dto.Image != null)
             {
                 if (user.Image != null)
                 {
-                    this._filesService.Delete(Guid.Parse(user.Image.Split("/").Last()));
+                    this.filesService.Delete(Guid.Parse(user.Image.Split("/").Last()));
                 }
 
                 user.Image = dto.Image;
@@ -112,7 +112,7 @@ namespace ModernPlayerManagementAPI.Services
                 user.Username = dto.Username;
             }
 
-            if (dto.Email != user.Email && dto.Email != null && this._emailValidator.IsValidEmail(dto.Email))
+            if (dto.Email != user.Email && dto.Email != null && this.emailValidator.IsValidEmail(dto.Email))
             {
                 user.Email = dto.Email;
             }
@@ -130,25 +130,25 @@ namespace ModernPlayerManagementAPI.Services
                 }
             }
 
-            this._userRepository.Update(user);
+            this.userRepository.Update(user);
         }
 
         public ICollection<UserDTO> SearchUser(string search)
         {
-            return this._userRepository.findUsersByUsernameContains(search)
-                .Select(user => this._mapper.Map<UserDTO>(user)).ToList();
+            return this.userRepository.findUsersByUsernameContains(search)
+                .Select(user => this.mapper.Map<UserDTO>(user)).ToList();
         }
 
         public UserDTO GetFromUsername(string username)
         {
-            return this._mapper.Map<UserDTO>(this._userRepository.GetUserByUsername(username));
+            return this.mapper.Map<UserDTO>(this.userRepository.GetUserByUsername(username));
         }
 
         public UserProfileDTO GetUserProfile(Guid userId)
         {
-            var user = this._userRepository.GetById(userId);
+            var user = this.userRepository.GetById(userId);
 
-            return this._mapper.Map<UserProfileDTO>(user);
+            return this.mapper.Map<UserProfileDTO>(user);
         }
 
         private string ValidatePassword(string password)

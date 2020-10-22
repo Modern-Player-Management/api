@@ -19,7 +19,7 @@ namespace ModernPlayerManagementAPITests
         private readonly List<Team> teams;
         private readonly List<User> users;
         private readonly TeamService teamService;
-        private List<Event> events;
+        private readonly List<Event> events;
 
         public TeamServiceTest()
         {
@@ -36,18 +36,15 @@ namespace ModernPlayerManagementAPITests
             teamRepository.Setup(mock => mock.GetById(It.IsAny<Guid>()))
                 .Returns<Guid>(teamId =>
                 {
-                    var team = this.teams.Find(team => team.Id == teamId);
-                    if (team.ManagerId != null)
-                    {
-                        team.Manager = this.users.Find(u => u.Id == team.ManagerId);
-                    }
+                    var team = this.teams.Find(t => t.Id == teamId);
+                    team.Manager = this.users.Find(u => u.Id == team.ManagerId);
 
                     team.Players ??= new List<Membership>();
 
                     foreach (var membership in team.Players)
                     {
                         membership.User = this.users.First(user => user.Id == membership.UserId);
-                        membership.Team = this.teams.First(team => team.Id == membership.TeamId);
+                        membership.Team = this.teams.First(t => t.Id == membership.TeamId);
                     }
                     
                     team.Games ??= new List<Game>();
@@ -129,21 +126,20 @@ namespace ModernPlayerManagementAPITests
             eventRespository.Setup(mock => mock.GetById(It.IsAny<Guid>())).Returns<Guid>(eventId =>
             {
                 var evt = this.teams.Select(team => team.Events).SelectMany(events => events)
-                    .First(evt => evt.Id == eventId);
+                    .First(et => et.Id == eventId);
 
                 foreach (var participation in evt.Participations)
                 {
-                    if (participation.UserId != null)
-                    {
-                        participation.User = this.users.First(u => u.Id == participation.UserId);
-                    }
+                    participation.User = this.users.First(u => u.Id == participation.UserId);
                 }
                 
                 return evt;
             });
+            
+            var participationRepository = new Mock<IRepository<Participation>>();
 
             teamService = new TeamService(teamRepository.Object, userRepository.Object, mapper, fileService.Object,
-                eventRespository.Object);
+                eventRespository.Object, participationRepository.Object);
         }
 
         [Fact]

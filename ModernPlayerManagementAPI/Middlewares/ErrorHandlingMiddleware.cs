@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace ModernPlayerManagementAPI.Middlewares
@@ -9,10 +10,12 @@ namespace ModernPlayerManagementAPI.Middlewares
     public class ErrorHandlingMiddleware
     {
         private readonly RequestDelegate next;
+        private readonly ILogger<ErrorHandlingMiddleware> logger;
 
-        public ErrorHandlingMiddleware(RequestDelegate next)
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
         {
             this.next = next;
+            this.logger = logger;
         }
 
         public async Task Invoke(HttpContext context /* other dependencies */)
@@ -23,6 +26,7 @@ namespace ModernPlayerManagementAPI.Middlewares
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.StackTrace);
                 await HandleExceptionAsync(context, ex);
             }
         }

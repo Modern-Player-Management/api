@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Services;
@@ -10,13 +11,13 @@ namespace ModernPlayerManagementAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
-        private readonly IEmailValidator _emailValidator;
+        private readonly IUserService userService;
+        private readonly IEmailValidator emailValidator;
 
         public AuthController(IUserService userService, IEmailValidator emailValidator)
         {
-            _userService = userService;
-            _emailValidator = emailValidator;
+            this.userService = userService;
+            this.emailValidator = emailValidator;
         }
 
         /// <summary>
@@ -26,15 +27,15 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <returns>Infos about the user and his JWT Token</returns>
         [HttpPost("authenticate")]
         [ProducesResponseType(typeof(LoggedUserDTO), StatusCodes.Status200OK)]
-        public IActionResult Authenticate([FromBody] LoginDTO dto)
+        public ActionResult<LoggedUserDTO> Authenticate([FromBody] LoginDTO dto)
         {
-            var user = this._userService.Authenticate(dto.Username, dto.Password);
+            var user = this.userService.Authenticate(dto.Username, dto.Password);
             if (user == null)
             {
                 return Unauthorized();
             }
 
-            LoggedUserDTO responseDTO = new LoggedUserDTO()
+            var responseDto = new LoggedUserDTO()
             {
                 Username = user.Username,
                 Email = user.Email,
@@ -42,8 +43,7 @@ namespace ModernPlayerManagementAPI.Controllers
                 Id = user.Id,
                 Image = user.Image
             };
-
-            return Ok(responseDTO);
+            return responseDto;
         }
 
         /// <summary>
@@ -55,21 +55,21 @@ namespace ModernPlayerManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Register([FromBody] RegisterDTO dto)
         {
-            var userNameUnique = this._userService.IsUniqueUser(dto.Username);
+            var userNameUnique = this.userService.IsUniqueUser(dto.Username);
             if (!userNameUnique)
             {
                 return BadRequest("User already exists");
             }
 
-            if (!this._emailValidator.IsValidEmail(dto.Email))
+            if (!this.emailValidator.IsValidEmail(dto.Email))
             {
                 return BadRequest("Invalid Email");
             }
 
-            var user = this._userService.Register(dto.Username, dto.Email, dto.Password);
+            var user = this.userService.Register(dto.Username, dto.Email, dto.Password);
             if (user == null)
             {
-                return BadRequest("Error registering");
+                throw new Exception("Error registering user");
             }
 
             return Ok();
@@ -82,15 +82,15 @@ namespace ModernPlayerManagementAPI.Controllers
         /// <returns>True if the username is available, false otherwise</returns>
         [HttpPost("available")]
         [ProducesResponseType(typeof(UsernameAvailabilityDTO), StatusCodes.Status200OK)]
-        public IActionResult CheckUsernameUsage([FromBody] UsernameCheckDTO dto)
+        public ActionResult<UsernameAvailabilityDTO> CheckUsernameUsage([FromBody] UsernameCheckDTO dto)
         {
-            var responseDTO = new UsernameAvailabilityDTO()
+            var responseDto = new UsernameAvailabilityDTO()
             {
                 Username = dto.Username,
-                IsAvailable = this._userService.IsUniqueUser(dto.Username)
+                IsAvailable = this.userService.IsUniqueUser(dto.Username)
             };
 
-            return Ok(responseDTO);
+            return responseDto;
         }
     }
 }

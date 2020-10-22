@@ -15,17 +15,20 @@ namespace ModernPlayerManagementAPI.Services
         private readonly ITeamRepository teamRepository;
         private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
-        private readonly IFilesService _filesService;
+        private readonly IFilesService filesService;
         private readonly IEventRepository eventRepository;
+        private readonly IRepository<Participation> participationRepository;
 
         public TeamService(ITeamRepository teamRepository, IUserRepository userRepository, IMapper mapper,
-            IFilesService filesService, IEventRepository eventRepository)
+            IFilesService filesService, IEventRepository eventRepository,
+            IRepository<Participation> participationRepository)
         {
             this.teamRepository = teamRepository;
             this.userRepository = userRepository;
             this.mapper = mapper;
-            this._filesService = filesService;
+            this.filesService = filesService;
             this.eventRepository = eventRepository;
+            this.participationRepository = participationRepository;
         }
 
         public bool IsUserTeamManager(Guid teamId, Guid userId)
@@ -55,6 +58,7 @@ namespace ModernPlayerManagementAPI.Services
                 evt.Participations.Add(new Participation()
                     {Created = DateTime.Now, Confirmed = false, UserId = team.ManagerId});
             }
+
             team.Events ??= new List<Event>();
             team.Events.Add(evt);
             this.teamRepository.Update(team);
@@ -93,7 +97,7 @@ namespace ModernPlayerManagementAPI.Services
                     Created = DateTime.Now
                 }).ToList();
 
-            CultureInfo provider = CultureInfo.InvariantCulture;
+            var provider = CultureInfo.InvariantCulture;
             var date = DateTime.ParseExact(replay.Properties.GetValueOrDefault("Date").Value.ToString(),
                 "yyyy-MM-dd HH-mm-ss", provider, DateTimeStyles.None);
 
@@ -115,7 +119,7 @@ namespace ModernPlayerManagementAPI.Services
             team.Games ??= new List<Game>();
             team.Games.Add(game);
 
-            this.teamRepository.Update(team); 
+            this.teamRepository.Update(team);
             team = this.teamRepository.GetById(teamId); // TODO replace with getById form game repo
             return this.mapper.Map<GameDTO>(team.Games.First(g => g.Name == name));
         }
@@ -193,7 +197,7 @@ namespace ModernPlayerManagementAPI.Services
                         Username = e.User.Username
                     }).ToList(),
                     CurrentHasConfirmed =
-                                          evt.Participations.First(p => p.UserId == userId).Confirmed
+                        evt.Participations.First(p => p.UserId == userId).Confirmed
                 }).ToList(),
                 Games = team.Games.Select(game => this.mapper.Map<GameDTO>(game)).ToList()
             };
@@ -243,11 +247,22 @@ namespace ModernPlayerManagementAPI.Services
                 throw new ArgumentException("You should provide either the username or the Id of the user");
             }
 
-            if (!team.Players.Select(member => member.UserId).Contains(player.Id))
+            if (team.Players.Select(member => member.UserId).Contains(player.Id)) return;
+
+            team.Players.Add(new Membership() {TeamId = teamId, UserId = player.Id});
+
+            foreach (var evt in team.Events)
             {
-                team.Players.Add(new Membership() {TeamId = teamId, UserId = player.Id});
-                this.teamRepository.Update(team);
+                evt.Participations.Add(new Participation()
+                {
+                    Confirmed = false,
+                    Created = DateTime.Now,
+                    UserId = playerDto.Id
+                });
+                eventRepository.Update(evt);
             }
+
+            this.teamRepository.Update(team);
         }
 
         public void RemovePlayer(Guid teamId, UserDTO dto)
@@ -269,6 +284,13 @@ namespace ModernPlayerManagementAPI.Services
             var team = this.teamRepository.GetById(teamId);
             if (team.Players.Select(member => member.UserId).Contains(player.Id))
             {
+                team.Events
+                    .SelectMany(e => e.Participations)
+                    .Where(p => p.UserId == dto.Id)
+                    .AsParallel()
+                    .ToList()
+                    .ForEach(p => this.participationRepository.Delete(p.Id));
+
                 team.Players.Remove(team.Players.First(membership => membership.UserId == player.Id));
                 this.teamRepository.Update(team);
             }
@@ -286,7 +308,7 @@ namespace ModernPlayerManagementAPI.Services
             {
                 if (team.Image != null)
                 {
-                    this._filesService.Delete(Guid.Parse(team.Image.Split("/").Last()));
+                    this.filesService.Delete(Guid.Parse(team.Image.Split("/").Last()));
                 }
 
                 team.Image = teamDto.Image;
@@ -310,7 +332,7 @@ namespace ModernPlayerManagementAPI.Services
             var team = this.teamRepository.GetById(teamId);
             if (team.Image != null)
             {
-                this._filesService.Delete(Guid.Parse(team.Image.Split("/").Last()));
+                this.filesService.Delete(Guid.Parse(team.Image.Split("/").Last()));
             }
 
             this.teamRepository.Delete(teamId);

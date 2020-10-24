@@ -8,7 +8,7 @@ namespace ModernPlayerManagementAPI.Services
 {
     public interface ITeamService
     {
-        TeamDTO CreateTeam(InsertTeamDTO team, Guid currentUserId);
+        TeamDTO CreateTeam(InsertTeamDTO insertTeamDto, Guid currentUserId);
         public TeamDTODetailed GetTeam(Guid id, Guid userId);
         ICollection<TeamDTO> GetTeams(Guid userId);
         void AddPlayer(Guid teamId, UserDTO player);

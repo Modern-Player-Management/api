@@ -35,25 +35,13 @@ namespace ModernPlayerManagementAPI.Services
         public bool IsUserTeamManager(Guid teamId, Guid userId)
         {
             var team = this.teamRepository.GetById(teamId);
-
             return team.ManagerId == userId;
         }
 
         public EventDTO AddEvent(Guid teamId, UpsertEventDTO dto)
         {
-            var team = this.teamRepository.GetById(teamId);
-            var evt = new Event()
-            {
-                Name = dto.Name,
-                Description = dto.Description,
-                Start = dto.Start,
-                End = dto.End,
-                Created = DateTime.Now,
-                Discrepancies = new List<Discrepancy>(),
-                Participations = team.Players.Select(membership => new Participation()
-                    {Created = DateTime.Now, Confirmed = false, UserId = membership.UserId}).ToList(),
-                Type = dto.Type
-            };
+            Team team = this.teamRepository.GetById(teamId); 
+            Event evt = EvtFromUpsertDto(dto, team);
 
             evt.Participations.Add(new Participation()
                 {Created = DateTime.Now, Confirmed = false, UserId = team.ManagerId});
@@ -79,6 +67,22 @@ namespace ModernPlayerManagementAPI.Services
             return responseDto;
         }
 
+        private static Event EvtFromUpsertDto(UpsertEventDTO dto, Team team)
+        {
+            return new Event()
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                Start = dto.Start,
+                End = dto.End,
+                Created = DateTime.Now,
+                Discrepancies = new List<Discrepancy>(),
+                Participations = team.Players.Select(membership => new Participation()
+                    {Created = DateTime.Now, Confirmed = false, UserId = membership.UserId}).ToList(),
+                Type = dto.Type
+            };
+        }
+
         public GameDTO AddGame(Replay replay, Guid teamId)
         {
             var team = this.teamRepository.GetById(teamId);
@@ -95,14 +99,14 @@ namespace ModernPlayerManagementAPI.Services
             return this.teamRepository.GetAverageStats(teamId).ToList();
         }
 
-        public TeamDTO CreateTeam(InsertTeamDTO teamDto, Guid currentUserId)
+        public TeamDTO CreateTeam(InsertTeamDTO insertTeamDto, Guid currentUserId)
         {
             var team = new Team()
             {
-                Name = teamDto.Name,
+                Name = insertTeamDto.Name,
                 ManagerId = currentUserId,
-                Description = teamDto.Description,
-                Image = teamDto.Image
+                Description = insertTeamDto.Description,
+                Image = insertTeamDto.Image
             };
             this.teamRepository.Insert(team);
 

@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using ModernPlayerManagementAPI.Models;
 using ModernPlayerManagementAPI.Models.DTOs;
 using ModernPlayerManagementAPI.Services;
@@ -21,11 +22,13 @@ namespace ModernPlayerManagementAPI.Controllers
     {
         private readonly ITeamService _teamService;
         private readonly IMapper _mapper;
+        private readonly ILogger<TeamsController> logger;
 
-        public TeamsController(ITeamService _teamService, IMapper _mapper)
+        public TeamsController(ITeamService _teamService, IMapper _mapper, ILogger<TeamsController> logger)
         {
             this._teamService = _teamService;
             this._mapper = _mapper;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -170,7 +173,6 @@ namespace ModernPlayerManagementAPI.Controllers
         public IActionResult UploadReplay(IFormFile file, Guid teamId)
         {
             var replay = Replay.Deserialize(file.OpenReadStream());
-
             return Ok(this._teamService.AddGame(replay, teamId));
         }
 

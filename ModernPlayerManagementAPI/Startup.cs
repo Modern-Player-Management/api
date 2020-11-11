@@ -16,7 +16,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ModernPlayerManagementAPI.Database;
 using ModernPlayerManagementAPI.Mapper;
-using ModernPlayerManagementAPI.Middlewares;
 using ModernPlayerManagementAPI.Repositories;
 using ModernPlayerManagementAPI.Services;
 using ModernPlayerManagementAPI.Services.Interfaces;
@@ -145,9 +144,6 @@ namespace ModernPlayerManagementAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-
 
             app.UseHttpsRedirection();
             app.UseSwagger();

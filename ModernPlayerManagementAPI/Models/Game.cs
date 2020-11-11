@@ -34,20 +34,25 @@ namespace ModernPlayerManagementAPI.Models
             Created = DateTime.Now;
             Date = ExtractDate();
             Name = replay.Properties.GetValueOrDefault("ReplayName").Value.ToString();
-            Win = IsWin(ExtractScore("Team0Score"), ExtractScore("Team1Score"));
+            Win = IsWin();
             PlayersStats = ExtractPlayerStats();
         }
 
-        private int ExtractScore(string team)
+        private GameResult IsWin()
         {
-            return int.Parse(replay.Properties.GetValueOrDefault(team).Value.ToString());
-        }
-
-        private static GameResult IsWin(int team0Score, int team1Score)
-        {
-            return (team0Score == team1Score)
+            int playerTeam = int.Parse(replay.Properties.GetValueOrDefault("PrimaryPlayerTeam").Value.ToString());
+            int playerTeamScore = ((List<PropertyDictionary>) replay.Properties.GetValueOrDefault("PlayerStats").Value)
+                .Where(v => int.Parse(v.GetValueOrDefault("Team").Value.ToString()) == playerTeam)
+                .Select(v => int.Parse(v.GetValueOrDefault("Goals").Value.ToString()))
+                .Sum();
+            int ennemyTeamScore = ((List<PropertyDictionary>) replay.Properties.GetValueOrDefault("PlayerStats").Value)
+                .Where(v => int.Parse(v.GetValueOrDefault("Team").Value.ToString()) != playerTeam)
+                .Select(v => int.Parse(v.GetValueOrDefault("Goals").Value.ToString()))
+                .Sum();
+            
+            return (playerTeamScore == ennemyTeamScore)
                 ? Game.GameResult.Draw
-                : (team0Score > team1Score ? Game.GameResult.Win : Game.GameResult.Loss);
+                : (playerTeamScore > ennemyTeamScore ? Game.GameResult.Win : Game.GameResult.Loss);
         }
 
         private DateTime ExtractDate()
@@ -58,8 +63,9 @@ namespace ModernPlayerManagementAPI.Models
 
         private List<PlayerStats> ExtractPlayerStats()
         {
+            int playerTeam = int.Parse(replay.Properties.GetValueOrDefault("PrimaryPlayerTeam").Value.ToString());
             return ((List<PropertyDictionary>) replay.Properties.GetValueOrDefault("PlayerStats").Value)
-                .Where(v => int.Parse(v.GetValueOrDefault("Team").Value.ToString()) == 0)
+                .Where(v => int.Parse(v.GetValueOrDefault("Team").Value.ToString()) == playerTeam)
                 .Select(v => new PlayerStats()
                 {
                     Player = v.GetValueOrDefault("Name").Value.ToString(),
